@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Pollen Fairy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <canvas id="game"></canvas>
+
+  <button id="mute" class="round" aria-label="Sound on or off">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path class="spk" d="M4 9h3l5-4v14l-5-4H4z"/>
+      <path class="wave" d="M15.5 8.5a5 5 0 0 1 0 7M18 6a8.5 8.5 0 0 1 0 12"/>
+      <path class="x" d="M16 9l5 6M21 9l-5 6"/>
+    </svg>
+  </button>
+
+  <div id="title" class="overlay show">
+    <h1>Pollen<span>Fairy</span></h1>
+    <p class="tag">Wake up the sleepy flowers!</p>
+    <button id="play" class="big" aria-label="Play">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg>
+    </button>
+    <div class="keys">
+      <span><kbd>◀</kbd><kbd>▶</kbd> walk</span>
+      <span><kbd class="wide">Space</kbd> hold to fly</span>
+    </div>
+  </div>
+
+  <div id="end" class="overlay">
+    <div class="card">
+      <h2>Hooray!</h2>
+      <p class="sub">The Great Flower is blooming!</p>
+      <div class="count">
+        <svg viewBox="0 0 40 40" aria-hidden="true">
+          <g fill="#ff8fc7"><circle cx="20" cy="9" r="7"/><circle cx="30.5" cy="16.6" r="7"/><circle cx="26.5" cy="29" r="7"/><circle cx="13.5" cy="29" r="7"/><circle cx="9.5" cy="16.6" r="7"/></g>
+          <circle cx="20" cy="20" r="6.5" fill="#ffd34d"/>
+        </svg>
+        <span id="endCount">0 / 0</span>
+      </div>
+      <p id="endMsg" class="msg"></p>
+      <button id="again" class="big small" aria-label="Play again">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5V2L7 6l5 4V7a5 5 0 1 1-5 5H5a7 7 0 1 0 7-7z"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div id="touch">
+    <button data-k="left" class="tbtn" id="tl" aria-label="Walk left"><svg viewBox="0 0 24 24"><path d="M15 5L7 12l8 7z"/></svg></button>
+    <button data-k="right" class="tbtn" id="tr" aria-label="Walk right"><svg viewBox="0 0 24 24"><path d="M9 5l8 7-8 7z"/></svg></button>
+    <button data-k="fly" class="tbtn" id="tf" aria-label="Fly">
+      <svg viewBox="0 0 40 40"><g fill="#ff8fc7"><ellipse cx="12" cy="15" rx="9" ry="7" transform="rotate(-30 12 15)"/><ellipse cx="28" cy="15" rx="9" ry="7" transform="rotate(30 28 15)"/><ellipse cx="14" cy="27" rx="6" ry="4.5" transform="rotate(30 14 27)"/><ellipse cx="26" cy="27" rx="6" ry="4.5" transform="rotate(-30 26 27)"/></g><rect x="19" y="10" width="2.4" height="22" rx="1.2" fill="#6a4bb0"/></svg>
+    </button>
+  </div>
+
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

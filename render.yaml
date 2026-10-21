@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: pollen-fairy
+    runtime: static
+    buildCommand: npm ci && npm run build
+    staticPublishPath: ./dist
