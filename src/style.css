@@ -15,7 +15,7 @@ html, body {
   touch-action: none;
 }
 
-canvas {
+#game {
   position: fixed;
   inset: 0;
   width: 100%;
@@ -325,4 +325,54 @@ kbd {
   position: fixed; left: 50%; bottom: 8px; translate: -50% 0; z-index: 10; pointer-events: none;
   background: rgba(40, 20, 70, 0.75); color: #fff; font-size: 13px; font-weight: 700;
   padding: 4px 12px; border-radius: 999px;
+}
+
+/* ---------- dress-up ---------- */
+#wardrobe { background: radial-gradient(ellipse at 50% 50%, rgba(255, 250, 255, 0.6), rgba(255, 255, 255, 0.3) 75%); gap: 16px; }
+.ward { display: flex; gap: 20px; align-items: stretch; max-width: 960px; width: 100%; justify-content: center; }
+.ward-preview {
+  position: relative; flex: 0 0 auto; width: min(280px, 34vw); aspect-ratio: 3 / 4;
+  background: radial-gradient(circle at 50% 40%, #fff, #f3e8ff 70%); border-radius: 36px;
+  box-shadow: 0 10px 0 rgba(160, 130, 220, 0.45), 0 18px 34px rgba(90, 60, 140, 0.2);
+}
+.ward-preview canvas { width: 100%; height: 100%; display: block; transition: transform 0.1s; }
+.ward-preview .nametag { position: absolute; left: 50%; bottom: 12px; translate: -50% 0; }
+.ward-closet {
+  flex: 1 1 auto; max-width: 600px; background: rgba(255, 255, 255, 0.88); border-radius: 36px; padding: 16px;
+  box-shadow: 0 10px 0 rgba(160, 130, 220, 0.45), 0 18px 34px rgba(90, 60, 140, 0.2);
+  display: flex; flex-direction: column; gap: 14px; align-items: center;
+}
+.ward-tabs { display: flex; gap: 10px; }
+.ward-tabs button {
+  width: 66px; height: 66px; border-radius: 22px; border: 0; padding: 4px; background: #f3ecff;
+  box-shadow: 0 4px 0 #d9cbf6;
+}
+.ward-tabs button.on { background: #ffe9a8; box-shadow: 0 4px 0 #f0b850, 0 0 0 3px #ffcf3a inset; }
+.ward-tabs canvas, .ward-choice canvas { width: 100%; height: 100%; display: block; pointer-events: none; }
+.ward-styles { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+.ward-choice {
+  width: 84px; height: 100px; border-radius: 22px; border: 0; padding: 4px; background: #f7f2ff;
+  box-shadow: 0 4px 0 #d9cbf6; transition: transform 0.12s;
+}
+.ward-choice:hover { transform: translateY(-3px); }
+.ward-choice.on { background: #fff4cc; box-shadow: 0 4px 0 #f0b850, 0 0 0 4px #ffcf3a inset; }
+.ward-swatches { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+.ward-swatch {
+  --c: #fff; width: 44px; height: 44px; border-radius: 50%; border: 4px solid #fff; padding: 0;
+  background: var(--c); box-shadow: 0 3px 8px rgba(90, 60, 140, 0.25);
+}
+.ward-swatch.on { outline: 4px solid #ffcf3a; transform: scale(1.12); }
+.kid-dress {
+  position: absolute; top: -8px; left: -8px; width: 42px; height: 42px; border-radius: 50%; border: 0;
+  background: #fff; font-size: 20px; box-shadow: 0 3px 10px rgba(90, 60, 140, 0.2);
+}
+.avatar canvas { width: 100%; height: 100%; border-radius: 50%; display: block; }
+.map-top { gap: 12px; }
+.dress-btn { font-size: 28px; }
+.marker canvas.fairy { width: 54px; height: 70px; font-size: 0; }
+@media (max-aspect-ratio: 1/1) {
+  .ward { flex-direction: column; align-items: center; }
+  .ward-preview { width: min(170px, 42vw); }
+  .ward-choice { width: 68px; height: 82px; }
+  .ward-tabs button { width: 58px; height: 58px; }
 }
