@@ -281,7 +281,7 @@ function drawBranch(pl: Platform, w: World): void {
 
 export function drawPlatforms(w: World): void {
   for (const pl of w.platforms) {
-    if (pl.hidden || !visible(pl.x - 80, pl.x + pl.w + 80)) continue;
+    if (pl.hidden || pl.invisible || !visible(pl.x - 80, pl.x + pl.w + 80)) continue;
     if (pl.type === 'rock') drawRock(pl);
     else if (pl.type === 'leaf') drawLeafPlat(pl, w);
     else if (pl.type === 'mushroom') drawMushroomShape(pl.x + pl.w / 2, w.ground(pl.x + pl.w / 2), pl.y, pl.w, pl.sag, pl.col!, pl.spots ?? []);

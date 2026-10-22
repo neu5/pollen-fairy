@@ -135,4 +135,20 @@ const rain: Theme = {
   butterflies: false, tint: '#c6cfe2', weather: 'rain',
 };
 
-export const THEMES: Record<string, Theme> = { meadow, morning, night, rain };
+// Warm, windy afternoon with golden grass and dandelion fluff.
+const windy: Theme = {
+  ...meadow,
+  id: 'windy',
+  sky: [[0, '#5fb2ec'], [0.45, '#a6dcf8'], [0.75, '#ffe9c0'], [0.9, '#ffd8a4'], [1, '#ffc9a0']],
+  range1: ['#c6b6e0', '#f3e2e6'], range2: ['#b4c8e6', '#ece6ee'],
+  haze: ['250,240,225', '255,232,205'],
+  farHill: ['#d2dcb0', '#e8ecd0'], midHill: ['#c4d488', '#dce6b0'],
+  backHill: ['#b9c967', '#98ad52'],
+  bushBack: { dark: '#93a955', mid: '#a9bd63', light: '#cddc8a', flower: ['#fff3b0', '#ffffff'] },
+  bushPlay: { dark: '#6f9a3c', mid: '#86b04a', light: '#b2d468', flower: ['#ffd166', '#ffffff', '#ff8fc7'] },
+  grass: ['#8fb83a', '#a2c84a', '#d6ea7a'],
+  dirt: ['#c08a55', '#9c6a48', '#7a4a48'],
+  motes: '255,255,255', moteCount: 60, moteSize: 1.3,
+};
+
+export const THEMES: Record<string, Theme> = { meadow, morning, night, rain, windy };
