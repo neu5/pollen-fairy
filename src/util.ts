@@ -35,7 +35,9 @@ export const FILTER_OK = (() => {
 
 // Pre-render a drawing into an offscreen canvas. `res` < 1 renders at lower
 // resolution, which (upscaled) also softens it — a cheap depth-of-field.
-export function sprite(w, h, res, blur, draw) {
+export interface Sprite { img: HTMLCanvasElement; w: number; h: number; pad: number }
+
+export function sprite(w: number, h: number, res: number, blur: number, draw: (g: CanvasRenderingContext2D) => void): Sprite {
   const pad = 4 + blur * 3;
   const cw = (w + pad * 2) * res, ch = (h + pad * 2) * res;
   const c = makeCanvas(cw, ch);

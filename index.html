@@ -32,10 +32,60 @@
     </div>
   </div>
 
+  <button id="home" class="round home" aria-label="Back to map">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path class="spk" d="M12 3.5 3 11h2.5v8.5h5v-5h3v5h5V11H21z"/></svg>
+  </button>
+
+  <div id="who" class="overlay">
+    <h2 class="screen-title">Who is playing?</h2>
+    <div id="profiles" class="profiles"></div>
+  </div>
+
+  <div id="newkid" class="overlay">
+    <div class="card">
+      <h2 class="ask">What is your name?</h2>
+      <input id="nameInput" class="name-input" maxlength="12" autocomplete="off" autocapitalize="words" spellcheck="false" aria-label="Your name">
+      <div class="row">
+        <button id="nameBack" class="pill ghost" aria-label="Back">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7"/></svg>
+        </button>
+        <button id="nameOk" class="big small" aria-label="OK">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 16.2 5.3 12l-1.8 1.8 6 6L21 8.3l-1.8-1.8z"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="confirm" class="overlay">
+    <div class="card">
+      <p id="confirmMsg" class="ask"></p>
+      <div class="row">
+        <button id="confirmNo" class="pill">No</button>
+        <button id="confirmYes" class="pill danger">Yes</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="map" class="overlay">
+    <div class="map-top">
+      <button id="mapBack" class="pill ghost" aria-label="Change player">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7"/></svg>
+      </button>
+    </div>
+    <div class="map-board">
+      <svg class="map-path" viewBox="0 0 1000 560" preserveAspectRatio="none" aria-hidden="true">
+        <path id="mapPath" d=""/>
+      </svg>
+      <div id="stones"></div>
+      <div id="mapMarker" class="marker"><span id="mapName" class="nametag"></span><span class="fairy">🧚</span></div>
+    </div>
+  </div>
+
   <div id="end" class="overlay">
     <div class="card">
-      <h2>Hooray!</h2>
-      <p class="sub">The Great Flower is blooming!</p>
+      <h2 id="endTitle">Hooray!</h2>
+      <p id="endSub" class="sub"></p>
+      <div id="endStars" class="end-stars"></div>
       <div class="count">
         <svg viewBox="0 0 40 40" aria-hidden="true">
           <g fill="#ff8fc7"><circle cx="20" cy="9" r="7"/><circle cx="30.5" cy="16.6" r="7"/><circle cx="26.5" cy="29" r="7"/><circle cx="13.5" cy="29" r="7"/><circle cx="9.5" cy="16.6" r="7"/></g>
@@ -43,10 +93,17 @@
         </svg>
         <span id="endCount">0 / 0</span>
       </div>
-      <p id="endMsg" class="msg"></p>
-      <button id="again" class="big small" aria-label="Play again">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5V2L7 6l5 4V7a5 5 0 1 1-5 5H5a7 7 0 1 0 7-7z"/></svg>
-      </button>
+      <div class="row">
+        <button id="endMap" class="pill" aria-label="Map">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5 3 11h2.5v8.5h5v-5h3v5h5V11H21z"/></svg>
+        </button>
+        <button id="endReplay" class="pill" aria-label="Play again">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5V2L7 6l5 4V7a5 5 0 1 1-5 5H5a7 7 0 1 0 7-7z"/></svg>
+        </button>
+        <button id="endNext" class="big small" aria-label="Next level">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg>
+        </button>
+      </div>
     </div>
   </div>
 

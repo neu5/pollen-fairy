@@ -1,0 +1,135 @@
+import { TAU, mulberry32, pick } from '../util';
+import { THEMES } from '../themes';
+import type { Flower, LevelDef, Platform, World, Decor } from './types';
+
+const FLOWER_COLORS = [
+  { p: '#ff8fc7', d: '#e8609f' },
+  { p: '#ffd166', d: '#f0a838' },
+  { p: '#c3aaff', d: '#9776f0' },
+  { p: '#86dcff', d: '#4aaee8' },
+  { p: '#ffa585', d: '#f2735a' },
+  { p: '#ffffff', d: '#e6dcf5' },
+];
+const FLOWER_TYPES: Flower['type'][] = ['daisy', 'cosmos', 'tulip', 'puff'];
+const MUSHROOM_COLORS = [
+  { cap: '#ff6b7f', cap2: '#d9456f', spot: '#ffffff' },
+  { cap: '#b48cff', cap2: '#8762e0', spot: '#fff4c2' },
+  { cap: '#ff9f5a', cap2: '#e2703c', spot: '#ffffff' },
+  { cap: '#5ec8ff', cap2: '#3592dc', spot: '#ffffff' },
+];
+export const WILD_COLORS = ['#ff9fd0', '#ffffff', '#ffe27a', '#c9b3ff', '#9fe0ff'];
+
+export function makePlatform(d: LevelDef['platforms'][number], i: number, ground: (x: number) => number, r: () => number): Platform {
+  const pl: Platform = { type: d.type, x: d.x, y: d.y ?? 0, w: d.w, h: d.h ?? 0, sag: 0, sagV: 0, pad: 4, hidden: false };
+  if (pl.type === 'mushroom') {
+    pl.y = ground(pl.x + pl.w / 2) - pl.h;
+    pl.col = MUSHROOM_COLORS[i % MUSHROOM_COLORS.length];
+    pl.pad = pl.w * 0.12;
+    pl.spots = [];
+    for (let k = 0; k < 6; k++) pl.spots.push({ u: (k / 5 - 0.5) * 1.4 + (r() - 0.5) * 0.15, v: 0.3 + r() * 0.55, r: 5 + r() * 4 });
+  }
+  if (pl.type === 'rock') {
+    pl.vines = [];
+    const n = 2 + Math.floor(r() * 3);
+    for (let k = 0; k < n; k++) pl.vines.push({ u: 0.15 + r() * 0.7, len: 40 + r() * 70, ph: r() * TAU });
+    pl.tufts = [];
+    for (let k = 0; k < Math.floor(pl.w / 45); k++) pl.tufts.push({ u: r(), s: 0.6 + r() * 0.5, col: pick(r, WILD_COLORS), wild: r() < 0.4 });
+  }
+  if (pl.type === 'branch') {
+    pl.leaves = [];
+    for (let k = 0; k < 8; k++) pl.leaves.push({ dx: -14 + r() * 34, dy: 4 + r() * 22, r: 8 + r() * 8, c: pick(r, ['#3f9a52', '#52b35c', '#6cc562']) });
+  }
+  return pl;
+}
+
+export function createWorld(def: LevelDef): World {
+  const r = mulberry32(def.seed);
+  const ground = def.ground;
+
+  const platforms = def.platforms.map((d, i) => makePlatform(d, i, ground, r));
+  if (def.tree != null) for (const pl of platforms) if (pl.type === 'branch') pl.side = pl.x + pl.w / 2 < def.tree ? 'left' : 'right';
+
+  const flowers: Flower[] = def.flowers.map(d => {
+    const on = d.p != null ? platforms[d.p] : null;
+    const x = on ? on.x + on.w * (d.u ?? 0.5) : (d.x ?? 0);
+    return {
+      x, on,
+      by: on ? 0 : ground(x) + 2,
+      h: on ? 32 + r() * 12 : 46 + r() * 24,
+      type: pick(r, FLOWER_TYPES),
+      col: pick(r, FLOWER_COLORS),
+      size: on ? 1 + r() * 0.15 : 1.1 + r() * 0.25,
+      phase: r() * TAU,
+      dside: r() < 0.5 ? -1 : 1,
+      visited: false, open: 0.45, openV: 0, wiggle: 0,
+    };
+  });
+
+  const clear = (x: number) => !(def.noDecorIn ?? []).some(([a, b]) => x > a && x < b);
+  const decor: Decor[] = [];
+  for (let x = 20; x < def.worldW; x += 14 + r() * 34) {
+    const t = r();
+    const type: Decor['type'] = t < 0.55 ? 'tuft' : t < 0.78 ? 'wild' : t < 0.86 ? 'stone' : t < 0.94 ? 'clover' : 'shroom';
+    const d = { x, type, s: 0.7 + r() * 0.6, col: pick(r, WILD_COLORS), ph: r() * TAU, dark: r() < 0.5 };
+    if (clear(x)) decor.push(d);
+  }
+  const pebbles = [];
+  for (let x = 0; x < def.worldW; x += 40 + r() * 90) pebbles.push({ x, d: 30 + r() * 120, rx: 4 + r() * 9, ry: 3 + r() * 5 });
+  const playBushes = [];
+  for (let x = 60; x < def.worldW; x += 160 + r() * 260) {
+    const b = { x, i: Math.floor(r() * 8), fern: r() < 0.4, k: 0.7 + r() * 0.5 };
+    if (clear(x)) playBushes.push(b);
+  }
+
+  let tree: World['tree'] = null;
+  if (def.tree != null) {
+    const canopy = [];
+    for (let i = 0; i < 44; i++) canopy.push({ x: def.tree + (r() - 0.5) * 760, y: -170 + (r() - 0.5) * 240, r: 60 + r() * 55 });
+    canopy.sort((a, b) => a.y - b.y);
+    const bark = [];
+    for (let i = 0; i < 6; i++) bark.push({ dx: -50 + (i / 5) * 100 + (r() - 0.5) * 10 });
+    tree = { x: def.tree, canopy, bark };
+  }
+
+  const w: World = {
+    def, theme: THEMES[def.theme], nextTheme: null, themeMix: 0, tintA: 1,
+    worldW: def.worldW, ground, platforms, flowers, decor, pebbles, playBushes, tree,
+    entities: [],
+    player: {
+      x: def.startX, y: ground(def.startX), vx: 0, vy: 0, face: 1, grounded: true, on: null, energy: 1,
+      flying: false, flyHeld: false, wingT: 0, walkT: 0, sq: 0, sqV: 0, frozen: false,
+    },
+    mode: 'idle',
+    collected: 0, total: flowers.length, arrived: 0, jarFill: 0, jarPulse: 0, hudBits: [],
+    finaleT: 0, finaleSpot: { x: 0, y: 0 }, rainbowA: 0,
+    hints: { walked: !def.hints, flew: !def.hints, walkA: 0, flyA: 0 },
+    time: 0,
+  };
+  def.setup?.(w);
+  return w;
+}
+
+export function flowerHead(f: Flower, time: number) {
+  const by = f.on ? f.on.y + f.on.sag : f.by;
+  const sway = Math.sin(time * 1.2 + f.phase) * 0.06 + Math.sin(time * 9) * 0.2 * f.wiggle * f.wiggle;
+  return { x: f.x + Math.sin(sway) * f.h, y: by - Math.cos(sway) * f.h, by, sway };
+}
+
+// Level goal reached: the fairy floats to `spot` and the celebration starts.
+export function win(w: World, spot: { x: number; y: number }): void {
+  if (w.mode !== 'play') return;
+  w.mode = 'finale';
+  w.finaleT = 0;
+  w.finaleSpot = spot;
+  w.player.frozen = true;
+}
+
+export function playerNear(w: World, x: number, y: number, r: number): boolean {
+  const p = w.player, dx = p.x - x, dy = p.y - 45 - y;
+  return dx * dx + dy * dy < r * r;
+}
+
+export function starsFor(w: World): number {
+  const f = w.total ? w.collected / w.total : 1;
+  return f >= 0.9 ? 3 : f >= 0.5 ? 2 : 1;
+}

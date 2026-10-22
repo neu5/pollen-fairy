@@ -2,26 +2,8 @@ import { TAU, circle, pick } from './util';
 
 // Procedural art for background layers. Everything is drawn once into sprites.
 
-export const PAL = {
-  far: [
-    { trunk: '#9bb9cc', dark: '#9cc4cf', mid: '#afd3d9', light: '#cbe6e6' },
-    { trunk: '#a9aed4', dark: '#b7bde3', mid: '#c8cdec', light: '#e0e2f6' },
-    { trunk: '#b3a9d0', dark: '#d2b8dc', mid: '#e0c8e6', light: '#f2e0f2' },
-  ],
-  mid: [
-    { trunk: '#6e7f8f', dark: '#5aa68a', mid: '#71bd96', light: '#a3dcb0' },
-    { trunk: '#7b6f8e', dark: '#e195bd', mid: '#f2b1cf', light: '#ffd6e8' },
-    { trunk: '#6e7f8f', dark: '#62a8b6', mid: '#7cc2c4', light: '#b0e2d6' },
-    { trunk: '#6e7f8f', dark: '#86b866', mid: '#a0cc78', light: '#cbe8a0' },
-  ],
-  near: [
-    { trunk: '#6a4f45', trunkLight: '#9a7663', dark: '#2f7d55', mid: '#3e955f', light: '#6dbb6e' },
-    { trunk: '#5f4a4a', trunkLight: '#8f6f6a', dark: '#357a63', mid: '#479373', light: '#7cc08a' },
-    { trunk: '#6a4f45', trunkLight: '#9a7663', dark: '#c46f9c', mid: '#dc8db5', light: '#f6bcd6' },
-  ],
-  bushBack: { dark: '#4f9a6a', mid: '#62ad76', light: '#8fcf90', flower: ['#ffd1e8', '#fff3b0', '#e3d4ff'] },
-  bushPlay: { dark: '#2f8048', mid: '#3f9a52', light: '#6cc062', flower: ['#ff8fc7', '#ffffff', '#ffd166', '#b9a0ff'] },
-};
+export interface TreePal { trunk: string; trunkLight?: string; dark: string; mid: string; light: string }
+export interface BushPal { dark: string; mid: string; light: string; flower: string[] }
 
 export const CASTLE_PAL = {
   wall: '#c4bfe6', wallLight: '#e2ddf8', roof: '#ec9fc6', roofLight: '#f8c3de',
@@ -151,7 +133,7 @@ export function drawFern(g, w, h, col, r) {
   }
 }
 
-export function drawCloud(g, w, h, r) {
+export function drawCloud(g, w, h, r, shade = 'rgba(214,206,245,0.95)') {
   const blobs = [];
   for (let i = 0; i < 8; i++) {
     const u = i / 7;
@@ -161,7 +143,7 @@ export function drawCloud(g, w, h, r) {
       r: h * (0.17 + Math.sin(u * Math.PI) * 0.17 + r() * 0.05),
     });
   }
-  g.fillStyle = 'rgba(214,206,245,0.95)'; for (const b of blobs) circle(g, b.x, b.y + 6, b.r);
+  g.fillStyle = shade; for (const b of blobs) circle(g, b.x, b.y + 6, b.r);
   g.fillStyle = '#ffffff'; for (const b of blobs) circle(g, b.x, b.y, b.r * 0.94);
   g.fillStyle = 'rgba(255,246,226,0.95)'; for (const b of blobs) circle(g, b.x + b.r * 0.18, b.y - b.r * 0.25, b.r * 0.5);
 }
