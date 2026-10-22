@@ -223,3 +223,39 @@ export function drawHangingVine(g, w, h, col, r) {
   }
   for (let i = 0; i < 7; i++) circle(g, w * 0.15 + r() * w * 0.7, r() * 20, 18 + r() * 12);
 }
+
+// Cave: a rounded rock spike growing up, with a few crystal glints.
+export function drawStalagmite(g, w, h, p, r) {
+  const cx = w / 2, bw = w * (0.32 + r() * 0.12);
+  const grd = g.createLinearGradient(cx - bw, 0, cx + bw, 0);
+  grd.addColorStop(0, p.dark); grd.addColorStop(0.6, p.mid); grd.addColorStop(1, p.light);
+  g.fillStyle = grd;
+  g.beginPath();
+  g.moveTo(cx - bw, h);
+  g.bezierCurveTo(cx - bw * 0.8, h * 0.5, cx - bw * 0.25, h * 0.15, cx, h * 0.04);
+  g.bezierCurveTo(cx + bw * 0.25, h * 0.15, cx + bw * 0.8, h * 0.5, cx + bw, h);
+  g.closePath(); g.fill();
+  g.strokeStyle = 'rgba(0,0,0,0.15)'; g.lineWidth = 3;
+  for (let i = 1; i < 4; i++) {
+    const y = h * (0.3 + i * 0.17), k = (y - h * 0.04) / h;
+    g.beginPath(); g.moveTo(cx - bw * k * 0.9, y); g.quadraticCurveTo(cx, y + 8, cx + bw * k * 0.9, y); g.stroke();
+  }
+  g.fillStyle = 'rgba(200,240,255,0.7)';
+  for (let i = 0; i < 3; i++) {
+    const x = cx + (r() - 0.3) * bw, y = h * (0.5 + r() * 0.4), s = 3 + r() * 4;
+    g.beginPath(); g.moveTo(x, y - s * 2); g.lineTo(x + s, y); g.lineTo(x, y + s * 0.6); g.lineTo(x - s, y); g.closePath(); g.fill();
+  }
+}
+
+// Cave: rock spikes hanging from the ceiling.
+export function drawStalactites(g, w, h, col, r) {
+  g.fillStyle = col;
+  g.fillRect(0, 0, w, h * 0.12);
+  for (let i = 0; i < 7; i++) {
+    const x = r() * w, bw = 14 + r() * 26, len = h * (0.3 + r() * 0.7);
+    g.beginPath(); g.moveTo(x - bw, 0);
+    g.quadraticCurveTo(x - bw * 0.3, len * 0.6, x, len);
+    g.quadraticCurveTo(x + bw * 0.3, len * 0.6, x + bw, 0);
+    g.closePath(); g.fill();
+  }
+}

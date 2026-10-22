@@ -3,7 +3,7 @@ import { glow } from '../engine/fx';
 import { TAU, mulberry32, mod, pick, sprite, drawSprite, circle, type Sprite } from '../util';
 import {
   CASTLE_PAL, drawRoundTree, drawPine, drawTallTree, drawBush, drawFern, drawCloud, drawCastle,
-  drawGrassClump, drawBigLeaf, drawHangingVine,
+  drawGrassClump, drawBigLeaf, drawHangingVine, drawStalagmite, drawStalactites,
 } from '../art';
 import type { Theme } from '../themes';
 
@@ -84,12 +84,12 @@ function buildBackdrop(t: Theme): Backdrop {
   const far: Sprite[] = [];
   for (let i = 0; i < 9; i++) {
     const p = t.far[i % t.far.length], pine = i % 3 === 2;
-    far.push(sprite(130, 210, 0.45, 1.6, g => (pine ? drawPine : drawRoundTree)(g, 130, 210, p, R)));
+    far.push(sprite(130, 210, 0.45, 1.6, g => (t.rocks ? drawStalagmite : pine ? drawPine : drawRoundTree)(g, 130, 210, p, R)));
   }
   const mid: Sprite[] = [];
   for (let i = 0; i < 10; i++) {
     const pine = i % 4 === 3, p = pine ? t.mid[Math.min(2, t.mid.length - 1)] : t.mid[i % t.mid.length];
-    mid.push(sprite(230, 400, 0.6, 0.9, g => (pine ? drawPine : drawRoundTree)(g, 230, 400, p, R)));
+    mid.push(sprite(230, 400, 0.6, 0.9, g => (t.rocks ? drawStalagmite : pine ? drawPine : drawRoundTree)(g, 230, 400, p, R)));
   }
   const near = [0, 1, 2].map(i => sprite(360, 1000, 0.6, 0.5, g => drawTallTree(g, 360, 1000, t.near[i % t.near.length], R)));
   const bush = [0, 1, 2, 3, 4].map(i => sprite(200, 110, 0.7, 0.4, g => drawBush(g, 200, 110, t.bushBack, R, i % 2 === 0)));
@@ -97,7 +97,10 @@ function buildBackdrop(t: Theme): Backdrop {
   const fern = [0, 1].map(() => sprite(200, 120, 1, 0, g => drawFern(g, 200, 120, t.fern, R)));
   const fgGrass = [0, 1, 2].map(() => sprite(320, 180, 0.3, 4, g => drawGrassClump(g, 320, 180, t.fg, R)));
   const fgLeaf = [0, 1].map(() => sprite(320, 240, 0.3, 4, g => drawBigLeaf(g, 320, 240, t.fgLeaf, R)));
-  const hang = [0, 1].map(() => sprite(150, 320, 0.3, 4, g => drawHangingVine(g, 150, 320, t.hang, R)));
+  const hang = [0, 1].map(() => t.rocks
+    ? sprite(420, 260, 0.35, 3, g => drawStalactites(g, 420, 260, t.hang, R))
+    : sprite(150, 320, 0.3, 4, g => drawHangingVine(g, 150, 320, t.hang, R)));
+  const backCeil = t.rocks ? [0, 1].map(() => sprite(420, 300, 0.4, 1.5, g => drawStalactites(g, 420, 300, t.range2[0], R))) : [];
 
   const L = {
     clouds: Array.from({ length: 9 }, (_, i) => ({ x: i * 380 + R() * 200, y: 30 + R() * 230, s: pick(R, clouds), k: 0.6 + R() * 0.8, drift: 5 + R() * 8 })),
@@ -106,7 +109,8 @@ function buildBackdrop(t: Theme): Backdrop {
     near: scatter(0.8, 760, x => ({ x, y: 690, s: pick(R, near), k: 0.85 + R() * 0.25 })),
     back: scatter(0.9, 110, x => ({ x, y: backHillY(x) + 22, s: pick(R, bush), k: 0.6 + R() * 0.6 })),
     fg: scatter(1.35, 520, x => ({ x, y: 772, s: R() < 0.6 ? pick(R, fgGrass) : pick(R, fgLeaf), k: 0.5 + R() * 0.35 })),
-    hang: scatter(1.25, 1400, x => ({ x, y: 0, s: pick(R, hang), k: 0.7 + R() * 0.4, ay: 0 })),
+    hang: scatter(1.25, t.rocks ? 330 : 1400, x => ({ x, y: 0, s: pick(R, hang), k: 0.7 + R() * 0.4, ay: 0 })),
+    ceil: t.rocks ? scatter(0.4, 300, x => ({ x, y: 0, s: pick(R, backCeil), k: 0.8 + R() * 0.5, ay: 0 })) : [],
     butterflies: Array.from({ length: 12 }, () => ({
       x: R() * (MAX_W * 0.75 + 2000), y: 250 + R() * 220, ph: R() * TAU, s: 0.7 + R() * 0.5,
       col: pick(R, ['#ffb3d9', '#ffe08a', '#b8a6ff', '#9fe3ff', '#ffc39e']),
@@ -283,12 +287,13 @@ function buildBackdrop(t: Theme): Backdrop {
       haze(0.22);
       fillProfile(0.3, 0.3, farHillY, t.farHill[0], t.farHill[1]);
       drawItems(L.far, 0.3, 0.3);
+      if (L.ceil.length) drawItems(L.ceil, 0.4, 0, V.camRest - 30);
       haze(0.28);
       fillProfile(0.55, 0.55, midHillY, t.midHill[0], t.midHill[1]);
       drawItems(L.mid, 0.55, 0.55);
       haze(0.14);
       drawRays();
-      drawItems(L.near, 0.8, 0.8);
+      if (t.nearTrees !== false) drawItems(L.near, 0.8, 0.8);
       drawBgButterflies();
       fillProfile(0.9, 0.9, backHillY, t.backHill[0], t.backHill[1], 500, 720);
       drawItems(L.back, 0.9, 0.9);

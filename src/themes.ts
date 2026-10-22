@@ -37,6 +37,8 @@ export interface Theme {
   vignette: string;                // 'r,g,b'
   butterflies: boolean;
   tint: string | null;             // multiply over the play layer (night, rain)
+  rocks?: boolean;                 // cave: stalagmites instead of trees, stalactites on top
+  nearTrees?: boolean;             // draw the big near trees (default yes)
   weather: Weather;
 }
 
@@ -221,4 +223,36 @@ const autumn: Theme = {
   butterflies: false, weather: 'leaves',
 };
 
-export const THEMES: Record<string, Theme> = { meadow, morning, night, rain, windy, pond, grey, autumn };
+// Dark crystal cave: purple rock, glowing worms, the fairy's light.
+const cave: Theme = {
+  ...meadow,
+  id: 'cave',
+  sky: [[0, '#140c2a'], [0.5, '#24164a'], [0.8, '#3a2468'], [1, '#4a2c74']],
+  sun: 'none', stars: true, rays: 0, clouds: 0,
+  range1: ['#2e2058', '#3a2a66'], range2: ['#251a4e', '#33245e'], castle: false,
+  haze: ['80,60,150', '100,70,160'], hazeK: 0.6,
+  farHill: ['#2c2058', '#382a66'],
+  far: [
+    { trunk: '#2a2050', dark: '#3c2c74', mid: '#4a3888', light: '#6a54b0' },
+    { trunk: '#2a2050', dark: '#2c3c74', mid: '#36508a', light: '#5078b0' },
+  ],
+  midHill: ['#241a4c', '#2e2258'],
+  mid: [
+    { trunk: '#1e1840', dark: '#1e4a6a', mid: '#2a6688', light: '#46a0c0' },
+    { trunk: '#1e1840', dark: '#4a2a6a', mid: '#5e3888', light: '#8a5ab8' },
+    { trunk: '#1e1840', dark: '#2a3a6a', mid: '#364c88', light: '#5070b0' },
+  ],
+  rocks: true, nearTrees: false,
+  backHill: ['#2a1e4a', '#1e1638'],
+  bushBack: { dark: '#2a2050', mid: '#34285e', light: '#46387a', flower: ['#7ae0ff', '#c3aaff'] },
+  bushPlay: { dark: '#1e3a4a', mid: '#2a4c5c', light: '#3a6672', flower: ['#7ae0ff', '#ff8fd0', '#c3aaff'] },
+  fern: '#2e5468',
+  dirt: ['#5a4a6a', '#3e3050', '#2a2038'],
+  grass: ['#3a6a6a', '#4a8080', '#7ac0b8'],
+  fg: '#0e0a1c', fgLeaf: '#120c22', hang: '#140e26',
+  motes: '150,230,255', moteCount: 50, moteSize: 1.2,
+  vignette: '10,5,30',
+  butterflies: false, tint: '#7a6cc0', weather: 'fireflies',
+};
+
+export const THEMES: Record<string, Theme> = { meadow, morning, night, rain, windy, pond, grey, autumn, cave };

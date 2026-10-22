@@ -268,7 +268,7 @@ export function drawFairy(w: World): void {
 // Additive lights for the fairy (drawn on top of a night tint). night = 0..1 darkness.
 export function drawFairyLight(w: World, night: number): void {
   const p = w.player, bob = fairyBob(w);
-  if (night > 0) glow(p.x, p.y - 45 + bob, 130, 'rgba(255,210,240,A)', 0.4 * night);
+  if (night > 0) glow(p.x, p.y - 45 + bob, 180, 'rgba(255,215,240,A)', 0.45 * night);
   const aw = Math.sin(V.time * 3) * 1.5, sx = p.face;
   for (const [ax, ay] of [[7 + aw, -89], [16 + aw, -85]]) glow(p.x + ax * sx, p.y + ay + bob, 9, 'rgba(255,230,140,A)', 0.9);
 }
