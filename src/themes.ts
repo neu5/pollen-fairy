@@ -151,4 +151,14 @@ const windy: Theme = {
   motes: '255,255,255', moteCount: 60, moteSize: 1.3,
 };
 
-export const THEMES: Record<string, Theme> = { meadow, morning, night, rain, windy };
+// Cool, fresh pond-side greens.
+const pond: Theme = {
+  ...meadow,
+  id: 'pond',
+  sky: [[0, '#4fb0e6'], [0.45, '#94d8f6'], [0.72, '#d2f1f4'], [0.88, '#e9f6e0'], [1, '#f6e6e8']],
+  farHill: ['#a8d8cc', '#d0ece4'], midHill: ['#7cc4a8', '#aedcc4'],
+  backHill: ['#5fb38a', '#3f9472'],
+  bushPlay: { dark: '#2a7a52', mid: '#38945e', light: '#62bb6c', flower: ['#ffffff', '#c3aaff', '#86dcff'] },
+};
+
+export const THEMES: Record<string, Theme> = { meadow, morning, night, rain, windy, pond };

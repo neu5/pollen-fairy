@@ -22,7 +22,7 @@ export const level02: LevelDef = {
   ground(x) {
     let y = 594 - 24 * Math.sin(x * 0.0024 + 0.3) - 14 * Math.sin(x * 0.0061 + 1.2) - 6 * Math.sin(x * 0.015);
     y = lerp(y, 592, sstep(2380, 2520, x) * (1 - sstep(2980, 3120, x)));
-    return y + sstep(RA, RA + 50, x) * (1 - sstep(RB - 50, RB, x)) * 72;
+    return y + sstep(RA, RA + 50, x) * (1 - sstep(RB - 50, RB, x)) * 56;
   },
   platforms: [
     { type: 'rock', x: 1300, y: 400, w: 180 },     // 0

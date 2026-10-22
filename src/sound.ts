@@ -107,6 +107,8 @@ export const Sound = (() => {
     thud() { tone(110, { vol: 0.12, dur: 0.35, slide: 0.5, fx: 0.1 }); noise(400, 150, 0.06, 0.3); },
     magic() { [0, 2, 4, 5, 7].forEach((k, i) => bell(PENTA[k], 0.07, i * 0.07)); },
     happy() { bell(PENTA[4], 0.09); bell(PENTA[7], 0.08, 0.12); },
+    note(i: number) { bell(PENTA[i], 0.14); tone(PENTA[i] / 2, { type: 'triangle', vol: 0.05, dur: 0.6, fx: 0.3 }); },
+    oops() { tone(330, { vol: 0.06, dur: 0.3, slide: 0.8, fx: 0.2 }); tone(294, { vol: 0.06, dur: 0.35, when: 0.15, slide: 0.8, fx: 0.2 }); },
     tick() { tone(1760, { vol: 0.03, dur: 0.08, fx: 0.2 }); },
     finale() {
       PENTA.forEach((f, i) => bell(f, 0.1, i * 0.12));

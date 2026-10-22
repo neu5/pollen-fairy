@@ -9,6 +9,7 @@ import type { Entity, World } from '../game/types';
 export class GreatFlower implements Entity {
   z = -1;
   open = 0;
+  locked = false;            // when true, touching it does nothing (another goal wins the level)
   constructor(public x: number, public petals = ['#ff6fae', '#ff94c4', '#ffb0d6', '#ffd2e8']) {}
 
   head(w: World) {
@@ -17,7 +18,7 @@ export class GreatFlower implements Entity {
   }
 
   update(w: World, dt: number): void {
-    if (w.mode === 'play' && Math.abs(w.player.x - this.x) < 100) {
+    if (!this.locked && w.mode === 'play' && Math.abs(w.player.x - this.x) < 100) {
       win(w, { x: this.x - 150, y: w.ground(this.x) - 190 });
     }
     if (w.mode === 'finale') {
@@ -66,7 +67,7 @@ export class GreatFlower implements Entity {
       ctx.restore();
     }
     ctx.restore();
-    if (o < 0.05) drawZ(hx + 40, hy - 60, 0, 18);
+    if (o < 0.05 && !this.locked) drawZ(hx + 40, hy - 60, 0, 18);
   }
 
   drawLight(w: World): void {
