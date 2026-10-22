@@ -5,6 +5,8 @@ import { TAU, clamp, damp, mod, pick, circle } from '../util';
 import { Sound } from '../sound';
 import { flowerHead } from './world';
 import type { Flower, World } from './types';
+import { drawFigure } from './fairyArt';
+import { getLook } from './look';
 
 function visit(w: World, f: Flower, hp: { x: number; y: number }): void {
   f.visited = true; f.openV += 5; f.wiggle = 1;
@@ -134,29 +136,6 @@ export function drawShadow(w: World): void {
   ctx.beginPath(); ctx.ellipse(p.x, sy + 2, 22 * (0.5 + 0.5 * k), 6 * (0.5 + 0.5 * k), 0, 0, TAU); ctx.fill();
 }
 
-const WING_UP = new Path2D('M0 0 C-6 -34 -44 -64 -60 -44 C-70 -28 -44 -6 0 0Z');
-const WING_LO = new Path2D('M0 2 C-28 4 -50 24 -38 40 C-26 50 -6 26 0 2Z');
-
-function drawWing(ax: number, ay: number, open: number, far: boolean, energy: number, glowing: boolean): void {
-  ctx.save(); ctx.translate(ax, ay); ctx.rotate(far ? -0.22 : 0.04); ctx.scale(open, 1);
-  const g = ctx.createRadialGradient(0, 0, 4, 0, 0, 66);
-  if (far) { g.addColorStop(0, '#d9609f'); g.addColorStop(0.55, '#ec90bd'); g.addColorStop(1, '#f2bb7c'); }
-  else { g.addColorStop(0, '#ff6fb5'); g.addColorStop(0.45, '#ffa0d2'); g.addColorStop(0.85, '#ffd28a'); g.addColorStop(1, '#fff0b0'); }
-  ctx.globalAlpha = (far ? 0.75 : 0.93) * (0.65 + 0.35 * energy);
-  if (glowing && !far) { ctx.shadowColor = 'rgba(255,190,240,0.95)'; ctx.shadowBlur = 18 * V.scale; }
-  ctx.fillStyle = g; ctx.fill(WING_UP); ctx.fill(WING_LO);
-  ctx.shadowBlur = 0;
-  if (!far) {
-    ctx.strokeStyle = 'rgba(255,255,255,0.9)'; ctx.lineWidth = 1.6;
-    ctx.stroke(WING_UP); ctx.stroke(WING_LO);
-    ctx.strokeStyle = 'rgba(255,255,255,0.45)'; ctx.lineWidth = 1.1;
-    ctx.beginPath(); ctx.moveTo(0, 0); ctx.quadraticCurveTo(-28, -30, -52, -44); ctx.moveTo(0, 0); ctx.quadraticCurveTo(-30, -14, -56, -26); ctx.moveTo(0, 2); ctx.quadraticCurveTo(-24, 18, -36, 36); ctx.stroke();
-    ctx.fillStyle = 'rgba(255,255,255,0.85)';
-    circle(ctx, -50, -40, 4); circle(ctx, -40, -50, 2.5); circle(ctx, -58, -30, 2); circle(ctx, -32, 34, 3);
-  }
-  ctx.restore();
-}
-
 export function fairyBob(w: World): number {
   const p = w.player, t = V.time;
   const moving = p.grounded && Math.abs(p.vx) > 20;
@@ -178,75 +157,16 @@ export function drawFairy(w: World): void {
   ctx.scale(p.face * (1 + p.sq * 0.5), 1 - p.sq);
   ctx.rotate(clamp(Math.abs(p.vx) / 240, 0, 1) * (p.grounded ? 0.05 : 0.14));
 
-  const open = 0.3 + 0.7 * (0.5 + 0.5 * Math.sin(p.wingT));
-  drawWing(-6, -47, open * 0.9, true, p.energy, glowing);
-  drawWing(-2, -44, open, false, p.energy, glowing);
-
-  // legs
   const swing = moving ? Math.sin(p.walkT) * 0.6 : 0;
-  ctx.lineCap = 'round'; ctx.lineWidth = 3.6;
-  for (const s of [-1, 1]) {
-    const a = p.grounded ? swing * s : -0.35 + s * 0.12;
-    const hx = s * 2.5, fx = hx + Math.sin(a) * 16, fy = -17 + Math.cos(a) * 16;
-    ctx.strokeStyle = s < 0 ? '#f2bfa0' : '#ffd2b5';
-    ctx.beginPath(); ctx.moveTo(hx, -17); ctx.lineTo(fx, fy); ctx.stroke();
-    ctx.fillStyle = s < 0 ? '#e8558f' : '#ff6fa8';
-    ctx.beginPath(); ctx.ellipse(fx + 2, fy, 4.2, 2.8, 0, 0, TAU); ctx.fill();
-  }
-  // petal dress
-  const flutter = p.grounded ? 0 : Math.sin(time * 14) * 1.5;
-  const dg = ctx.createLinearGradient(0, -46, 0, -14);
-  dg.addColorStop(0, '#6fe0c0'); dg.addColorStop(1, '#3fb79c');
-  ctx.fillStyle = dg;
-  ctx.beginPath(); ctx.moveTo(-6, -44); ctx.lineTo(6, -44);
-  ctx.quadraticCurveTo(8, -34, 15, -17 + flutter);
-  ctx.quadraticCurveTo(11, -10, 6, -15);
-  ctx.quadraticCurveTo(1.5, -9, -3, -15);
-  ctx.quadraticCurveTo(-9, -10, -14, -17 - flutter);
-  ctx.quadraticCurveTo(-8, -34, -6, -44);
-  ctx.closePath(); ctx.fill();
-  ctx.strokeStyle = 'rgba(255,255,255,0.4)'; ctx.lineWidth = 1.2;
-  ctx.beginPath(); ctx.moveTo(1, -34); ctx.quadraticCurveTo(3, -24, 6, -16); ctx.moveTo(-3, -34); ctx.quadraticCurveTo(-5, -24, -3, -16); ctx.stroke();
-  ctx.fillStyle = '#ffd166'; ctx.fillRect(-6.5, -37, 13, 3);
-  // arm
-  const armA = p.grounded ? (moving ? -Math.sin(p.walkT) * 0.5 : 0.15) : -0.7 + Math.sin(time * 6) * 0.15;
-  const sx = 1, sy = -41, hx2 = sx + Math.sin(armA) * 12, hy2 = sy + Math.cos(armA) * 12;
-  ctx.strokeStyle = '#ffd2b5'; ctx.lineWidth = 3.2;
-  ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(hx2, hy2); ctx.stroke();
-  // head
-  const hx = 2, hy = -58;
-  ctx.fillStyle = '#8a56d1'; circle(ctx, hx - 3, hy - 1, 17.5); circle(ctx, hx - 15, hy - 12, 8.5);
-  ctx.beginPath(); ctx.ellipse(hx - 14, hy + 8, 6, 11, 0.3, 0, TAU); ctx.fill();
-  ctx.fillStyle = '#ffe2cc'; circle(ctx, hx, hy, 15);
-  ctx.fillStyle = '#9a63e0'; ctx.beginPath();
-  ctx.arc(hx - 1, hy - 1, 16.5, Math.PI * 0.95, Math.PI * 1.9);
-  ctx.quadraticCurveTo(hx + 8, hy - 6, hx + 2, hy - 9);
-  ctx.quadraticCurveTo(hx - 4, hy - 4, hx - 15, hy + 2);
-  ctx.closePath(); ctx.fill();
-  ctx.fillStyle = 'rgba(255,255,255,0.25)'; ctx.beginPath(); ctx.ellipse(hx - 2, hy - 13, 7, 2.5, -0.2, 0, TAU); ctx.fill();
-  ctx.fillStyle = '#ff8fc7';
-  for (let k = 0; k < 5; k++) circle(ctx, hx - 15 + Math.cos(k * 1.2566) * 3.6, hy - 13 + Math.sin(k * 1.2566) * 3.6, 2.8);
-  ctx.fillStyle = '#ffe27a'; circle(ctx, hx - 15, hy - 13, 2);
-  // face
-  const blink = mod(time, 4.2) < 0.13;
-  for (const ex of [hx + 1.5, hx + 8.8]) {
-    if (blink) {
-      ctx.strokeStyle = '#3b2550'; ctx.lineWidth = 1.5;
-      ctx.beginPath(); ctx.arc(ex, hy + 1, 2.4, 0.15 * Math.PI, 0.85 * Math.PI); ctx.stroke();
-    } else {
-      ctx.fillStyle = '#3b2550'; ctx.beginPath(); ctx.ellipse(ex, hy + 1, 2.4, 3.2, 0, 0, TAU); ctx.fill();
-      ctx.fillStyle = '#fff'; circle(ctx, ex + 0.8, hy - 0.4, 1);
-    }
-  }
-  ctx.fillStyle = 'rgba(255,130,160,0.55)'; circle(ctx, hx + 11.5, hy + 6, 2.8); circle(ctx, hx - 2.5, hy + 6, 2.8);
-  ctx.strokeStyle = '#c2557a'; ctx.lineWidth = 1.4;
-  ctx.beginPath(); ctx.arc(hx + 5.2, hy + 6, 2.6, 0.15 * Math.PI, 0.85 * Math.PI); ctx.stroke();
-  // antennae
-  ctx.strokeStyle = '#6b4aa0'; ctx.lineWidth = 1.6;
-  const aw = Math.sin(time * 3) * 1.5;
-  ctx.beginPath(); ctx.moveTo(hx - 2, hy - 15); ctx.quadraticCurveTo(hx - 2, hy - 26, hx + 5 + aw, hy - 31);
-  ctx.moveTo(hx + 4, hy - 14); ctx.quadraticCurveTo(hx + 7, hy - 24, hx + 14 + aw, hy - 27); ctx.stroke();
-  ctx.fillStyle = '#ffe27a'; circle(ctx, hx + 5 + aw, hy - 31, 2.6); circle(ctx, hx + 14 + aw, hy - 27, 2.6);
+  drawFigure(getLook(), {
+    wing: 0.3 + 0.7 * (0.5 + 0.5 * Math.sin(p.wingT)),
+    legA: p.grounded ? [-swing, swing] : [-0.47, -0.23],
+    armA: p.grounded ? (moving ? -Math.sin(p.walkT) * 0.5 : 0.15) : -0.7 + Math.sin(time * 6) * 0.15,
+    flutter: p.grounded ? 0 : Math.sin(time * 14) * 1.5,
+    blink: mod(time, 4.2) < 0.13,
+    aw: Math.sin(time * 3) * 1.5,
+    glowing, energy: p.energy, t: time,
+  });
   ctx.restore();
 
   // wing-power pips

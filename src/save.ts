@@ -1,4 +1,5 @@
 import { DEBUG } from './debug';
+import { fixLook, randomLook, type Look } from './game/look';
 
 // Kid profiles + level progress in localStorage. Works (in memory only) if storage is blocked.
 
@@ -9,6 +10,7 @@ export interface Profile {
   color: string;
   createdAt: number;
   levels: Record<number, LevelResult>;
+  look: Look;
 }
 interface SaveData { profiles: Profile[]; lastProfileId: string | null }
 
@@ -20,7 +22,10 @@ function load(): SaveData {
     const raw = localStorage.getItem(KEY);
     if (raw) {
       const d = JSON.parse(raw) as SaveData;
-      if (Array.isArray(d.profiles)) return d;
+      if (Array.isArray(d.profiles)) {
+        for (const p of d.profiles) p.look = fixLook(p.look);
+        return d;
+      }
     }
   } catch { /* storage blocked or bad JSON: start fresh */ }
   return { profiles: [], lastProfileId: null };
@@ -44,6 +49,7 @@ export const Save = {
       color: COLORS[data.profiles.length % COLORS.length],
       createdAt: Date.now(),
       levels: {},
+      look: randomLook(),
     };
     data.profiles.push(p);
     data.lastProfileId = p.id;
@@ -54,6 +60,13 @@ export const Save = {
   remove(id: string): void {
     data.profiles = data.profiles.filter(p => p.id !== id);
     if (data.lastProfileId === id) data.lastProfileId = null;
+    persist();
+  },
+
+  setLook(id: string, look: Look): void {
+    const p = this.get(id);
+    if (!p) return;
+    p.look = look;
     persist();
   },
 

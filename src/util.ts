@@ -75,3 +75,10 @@ export function rr(g, x, y, w, h, r) {
   g.arcTo(x, y, x + w, y, r);
   g.closePath();
 }
+
+// Lighten (k > 0, towards white) or darken (k < 0, towards black) a #rrggbb colour.
+export function shade(hex: string, k: number): string {
+  const n = parseInt(hex.slice(1), 16), t = k > 0 ? 255 : 0, a = Math.abs(k);
+  const c = (v: number) => Math.round(v + (t - v) * a).toString(16).padStart(2, '0');
+  return `#${c(n >> 16)}${c((n >> 8) & 255)}${c(n & 255)}`;
+}

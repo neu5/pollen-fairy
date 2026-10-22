@@ -56,6 +56,27 @@
     </div>
   </div>
 
+  <div id="wardrobe" class="overlay">
+    <div class="ward">
+      <div class="ward-preview">
+        <canvas id="wardCanvas"></canvas>
+        <span id="wardName" class="nametag"></span>
+      </div>
+      <div class="ward-closet">
+        <div id="wardTabs" class="ward-tabs"></div>
+        <div id="wardStyles" class="ward-styles"></div>
+        <div id="wardColors" class="ward-swatches"></div>
+        <div id="wardSkins" class="ward-swatches"></div>
+      </div>
+    </div>
+    <div class="row">
+      <button id="wardRandom" class="pill" aria-label="Surprise me">🎲</button>
+      <button id="wardDone" class="big small" aria-label="Done">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 16.2 5.3 12l-1.8 1.8 6 6L21 8.3l-1.8-1.8z"/></svg>
+      </button>
+    </div>
+  </div>
+
   <div id="confirm" class="overlay">
     <div class="card">
       <p id="confirmMsg" class="ask"></p>
@@ -71,13 +92,14 @@
       <button id="mapBack" class="pill ghost" aria-label="Change player">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7"/></svg>
       </button>
+      <button id="mapDress" class="pill dress-btn" aria-label="Dress up">👗</button>
     </div>
     <div class="map-board">
       <svg id="mapSvg" class="map-path" viewBox="0 0 1000 560" preserveAspectRatio="none" aria-hidden="true">
         <path id="mapPath" d=""/>
       </svg>
       <div id="stones"></div>
-      <div id="mapMarker" class="marker"><span id="mapName" class="nametag"></span><span class="fairy">🧚</span></div>
+      <div id="mapMarker" class="marker"><span id="mapName" class="nametag"></span><canvas id="mapFairy" class="fairy"></canvas></div>
     </div>
   </div>
 

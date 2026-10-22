@@ -1,10 +1,11 @@
 import { LEVELS } from '../levels';
 import { Save, type Profile } from '../save';
+import { paintFairy } from './wardrobe';
 
 // DOM screens: title, who's playing, new kid, confirm, level map, end card.
 
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
-const SCREENS = ['title', 'who', 'newkid', 'confirm', 'map', 'end'] as const;
+const SCREENS = ['title', 'who', 'newkid', 'wardrobe', 'confirm', 'map', 'end'] as const;
 export type ScreenId = typeof SCREENS[number] | 'level';
 
 export function show(id: ScreenId): void {
@@ -19,14 +20,17 @@ function el<K extends keyof HTMLElementTagNameMap>(tag: K, cls?: string, text?: 
   return e;
 }
 
+// Round picture of the kid's fairy (head and shoulders).
 function avatar(p: Profile): HTMLElement {
   const a = el('div', 'avatar');
   a.style.setProperty('--c', p.color);
-  a.append(el('span', 'wing l'), el('span', 'wing r'), el('span', 'face', p.name.slice(0, 1).toUpperCase()));
+  const c = el('canvas');
+  a.append(c);
+  requestAnimationFrame(() => paintFairy(c, p.look, 0.6, 'head'));
   return a;
 }
 
-export interface WhoHandlers { pick(p: Profile): void; add(): void; remove(p: Profile): void }
+export interface WhoHandlers { pick(p: Profile): void; add(): void; remove(p: Profile): void; dress(p: Profile): void }
 
 export function renderWho(h: WhoHandlers): void {
   const box = $('profiles');
@@ -42,7 +46,10 @@ export function renderWho(h: WhoHandlers): void {
     const del = el('button', 'kid-del', '✕');
     del.setAttribute('aria-label', `Remove ${p.name}`);
     del.onclick = e => { e.stopPropagation(); h.remove(p); };
-    card.append(btn, del);
+    const dress = el('button', 'kid-dress', '👗');
+    dress.setAttribute('aria-label', `Dress up ${p.name}`);
+    dress.onclick = e => { e.stopPropagation(); h.dress(p); };
+    card.append(btn, del, dress);
     box.append(card);
   }
   const add = el('button', 'kid-btn add');
@@ -91,7 +98,7 @@ function pathD(pts: number[][]): string {
   return d;
 }
 
-export function renderMap(p: Profile, play: (id: number) => void, back: () => void): void {
+export function renderMap(p: Profile, play: (id: number) => void, back: () => void, dress: () => void): void {
   // tall phone screens get the same path turned on its side
   const tall = window.innerHeight > window.innerWidth;
   const W = tall ? 560 : 1000, H = tall ? 1000 : 560;
@@ -102,6 +109,9 @@ export function renderMap(p: Profile, play: (id: number) => void, back: () => vo
   $('mapName').textContent = p.name;
   $('mapPath').setAttribute('d', pathD(pts));
   $('mapBack').onclick = back;
+  $('mapDress').onclick = dress;
+  const mc = $<HTMLCanvasElement>('mapFairy');
+  requestAnimationFrame(() => paintFairy(mc, p.look, 0.6));
   const box = $('stones');
   box.replaceChildren();
   let current = 1;

@@ -13,6 +13,8 @@ import { updateHud } from './render/hud';
 import { LEVELS, getLevel } from './levels';
 import { Save, type Profile } from './save';
 import { show, renderWho, askName, confirm, renderMap, showEnd, type ScreenId } from './ui/screens';
+import { openWardrobe, tickWardrobe } from './ui/wardrobe';
+import { setLook } from './game/look';
 
 // Pollen Fairy — screens, game loop, level flow.
 
@@ -45,6 +47,7 @@ function goWho(): void {
   renderWho({
     pick: p => { profile = p; Save.select(p.id); goMap(); },
     add: goNewKid,
+    dress: p => goWardrobe(p, goWho),
     remove: p => confirm(`Remove ${p.name}?`, () => { Save.remove(p.id); goWho(); }, goWho),
   });
   setScreen('who');
@@ -53,23 +56,31 @@ function goWho(): void {
 function goNewKid(): void {
   screen = 'newkid';
   askName(
-    name => { profile = Save.add(name); goMap(); },
+    name => { profile = Save.add(name); goWardrobe(profile, goMap); },
     () => (Save.profiles().length ? goWho() : setScreen('title')),
   );
   $('home').classList.remove('show');
+}
+
+function goWardrobe(p: Profile, then: () => void): void {
+  screen = 'wardrobe';
+  $('home').classList.remove('show');
+  openWardrobe(p.name, p.look, look => { Save.setLook(p.id, look); then(); });
 }
 
 function goMap(): void {
   if (!profile) { goWho(); return; }
   world.mode = 'idle';
   releaseAll();
-  renderMap(profile, startLevel, goWho);
+  setLook(profile.look);
+  renderMap(profile, startLevel, goWho, () => goWardrobe(profile!, goMap));
   setScreen('map');
 }
 
 function startLevel(id: number): void {
   const def = getLevel(id);
   if (!def) return;
+  if (profile) setLook(profile.look);
   Sound.init(); Sound.startAmbient();
   clearFx();
   world = createWorld(def);
@@ -125,6 +136,7 @@ if (DEBUG) {
 // --------------------------------------------------------------- loop ----
 function update(dt: number): void {
   V.time += dt;
+  if (screen === 'wardrobe') tickWardrobe(V.time, dt);
   const w = world;
   w.time += dt;
   updatePlayer(w, dt);
