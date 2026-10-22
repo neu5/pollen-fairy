@@ -161,4 +161,8 @@ requestAnimationFrame(frame);
   goto(id: number) { if (!profile) profile = Save.last() ?? Save.add('Test'); startLevel(id); },
   win() { world.mode = 'play'; world.player.frozen = true; world.finaleSpot = { x: world.player.x, y: world.player.y - 100 }; world.mode = 'finale'; world.finaleT = 0; },
   levels: LEVELS,
+  // run the game forward without drawing: __pf.step(5)
+  step(sec: number) { for (let i = 0; i < sec * 60; i++) update(1 / 60); renderWorld(world); },
+  // move the fairy: __pf.tp(1200, 400)
+  tp(x: number, y?: number) { const p = world.player; p.x = x; p.y = y ?? world.ground(x); p.vy = 0; snapCamera(); },
 };

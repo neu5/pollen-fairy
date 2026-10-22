@@ -16,6 +16,7 @@ export interface Platform {
   type: PlatformType;
   x: number; y: number; w: number; h: number;
   sag: number; sagV: number; pad: number;
+  stem?: boolean;            // leaf platforms: draw the stalk from the ground (default yes)
   hidden: boolean;           // not solid / not drawn (e.g. a bridge that is not built yet)
   col?: MushroomCol;
   spots?: { u: number; v: number; r: number }[];

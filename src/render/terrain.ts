@@ -57,6 +57,14 @@ export function drawBigTree(w: World): void {
   ctx.fillStyle = cols[2]; for (const b of t.canopy) if (b.y < -150) circle(ctx, b.x + b.r * 0.25, b.y - b.r * 0.3, b.r * 0.42);
 }
 
+// Round leafy tree top, lit from the upper right.
+export function drawCanopy(blobs: { x: number; y: number; r: number }[], cols = ['#2f8a4f', '#45a85a', '#7fd06e']): void {
+  ctx.fillStyle = cols[0]; for (const b of blobs) circle(ctx, b.x, b.y + b.r * 0.18, b.r);
+  ctx.fillStyle = cols[1]; for (const b of blobs) circle(ctx, b.x + b.r * 0.06, b.y - b.r * 0.04, b.r * 0.84);
+  const top = blobs.length ? blobs[Math.floor(blobs.length * 0.6)].y : 0;
+  ctx.fillStyle = cols[2]; for (const b of blobs) if (b.y < top) circle(ctx, b.x + b.r * 0.25, b.y - b.r * 0.3, b.r * 0.42);
+}
+
 export function drawTreeLight(w: World): void {
   const t = w.tree;
   if (!t || !visible(t.x - 200, t.x + 200)) return;
@@ -192,9 +200,11 @@ function drawRock(pl: Platform): void {
 
 function drawLeafPlat(pl: Platform, w: World): void {
   const x = pl.x, y = pl.y + pl.sag, pw = pl.w, cx = x + pw * 0.45, gy = w.ground(cx);
-  ctx.strokeStyle = '#3e9a47'; ctx.lineWidth = 7; ctx.lineCap = 'round';
-  ctx.beginPath(); ctx.moveTo(cx - 24, gy + 6);
-  ctx.bezierCurveTo(cx - 60, gy - (gy - y) * 0.4, cx + 30, y + 60, cx, y + 8); ctx.stroke();
+  if (pl.stem !== false) {
+    ctx.strokeStyle = '#3e9a47'; ctx.lineWidth = 7; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(cx - 24, gy + 6);
+    ctx.bezierCurveTo(cx - 60, gy - (gy - y) * 0.4, cx + 30, y + 60, cx, y + 8); ctx.stroke();
+  }
   drawLeafBlade(x, y, pw);
 }
 

@@ -46,21 +46,25 @@ export const Sound = (() => {
   }
 
   let noiseBuf = null;
-  function whoosh() {
+  function noise(f0: number, f1: number, vol: number, dur: number, q = 1.2) {
     if (!c) return;
     if (!noiseBuf) {
-      noiseBuf = c.createBuffer(1, c.sampleRate * 0.5, c.sampleRate);
+      noiseBuf = c.createBuffer(1, c.sampleRate * 1.5, c.sampleRate);
       const data = noiseBuf.getChannelData(0);
       for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
     }
     const t = c.currentTime;
     const src = c.createBufferSource(); src.buffer = noiseBuf;
-    const bp = c.createBiquadFilter(); bp.type = 'bandpass'; bp.Q.value = 1.2;
-    bp.frequency.setValueAtTime(500, t); bp.frequency.exponentialRampToValueAtTime(1800, t + 0.35);
+    const bp = c.createBiquadFilter(); bp.type = 'bandpass'; bp.Q.value = q;
+    bp.frequency.setValueAtTime(f0, t); bp.frequency.exponentialRampToValueAtTime(f1, t + dur * 0.8);
     const g = c.createGain();
-    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.07, t + 0.06); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.45);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.06); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
     src.connect(bp); bp.connect(g); g.connect(dry);
-    src.start(t); src.stop(t + 0.5);
+    src.start(t); src.stop(t + dur + 0.05);
+  }
+
+  function whoosh() {
+    noise(500, 1800, 0.07, 0.45);
     tone(1318.5, { vol: 0.025, dur: 0.6, fx: 0.6 });
   }
 
@@ -98,6 +102,12 @@ export const Sound = (() => {
     },
     boing() { tone(200, { vol: 0.16, dur: 0.5, slide: 2.8, fx: 0.2 }); tone(400, { vol: 0.04, dur: 0.4, slide: 2.2, fx: 0.2 }); },
     land() { tone(170, { vol: 0.05, dur: 0.22, slide: 0.6, fx: 0 }); },
+    rustle() { noise(2400, 900, 0.09, 0.6, 0.8); },
+    splash() { noise(1200, 300, 0.08, 0.5, 0.7); },
+    thud() { tone(110, { vol: 0.12, dur: 0.35, slide: 0.5, fx: 0.1 }); noise(400, 150, 0.06, 0.3); },
+    magic() { [0, 2, 4, 5, 7].forEach((k, i) => bell(PENTA[k], 0.07, i * 0.07)); },
+    happy() { bell(PENTA[4], 0.09); bell(PENTA[7], 0.08, 0.12); },
+    tick() { tone(1760, { vol: 0.03, dur: 0.08, fx: 0.2 }); },
     finale() {
       PENTA.forEach((f, i) => bell(f, 0.1, i * 0.12));
       [523.25, 659.25, 783.99, 1046.5].forEach(f => bell(f, 0.08, 1.4));
