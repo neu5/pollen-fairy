@@ -26,6 +26,7 @@ export interface Backdrop {
   art: { playBush: Sprite[]; fern: Sprite[] };
   drawBack(rainbowA: number): void;
   drawFront(): void;
+  drawSkyLight(a: number): void;
 }
 
 function fillProfile(f: number, fy: number, fn: (x: number) => number, c0: string, c1: string, y0 = 430, y1 = 720): CanvasGradient {
@@ -263,6 +264,16 @@ function buildBackdrop(t: Theme): Backdrop {
       drawBgButterflies();
       fillProfile(0.9, 0.9, backHillY, t.backHill[0], t.backHill[1], 500, 720);
       drawItems(L.back, 0.9, 0.9);
+    },
+    // moon + stars shine through the night tint
+    drawSkyLight(a: number) {
+      if (t.sun !== 'moon') return;
+      layer(0, 0.06);
+      glow(sunX, 105, 200, 'rgba(200,210,255,A)', 0.35 * a);
+      ctx.globalAlpha = a; ctx.fillStyle = 'rgba(255,248,220,0.9)'; circle(ctx, sunX, 105, 34);
+      ctx.fillStyle = 'rgba(255,255,240,0.5)';
+      for (const s of L.stars) if (s.r > 1.3) circle(ctx, s.x * V.viewW, s.y, s.r * (0.6 + 0.4 * Math.sin(V.time * 1.5 + s.ph * 7)));
+      ctx.globalAlpha = 1;
     },
     drawFront() {
       drawItems(L.fg, 1.35, 1.15);

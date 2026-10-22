@@ -51,6 +51,7 @@ export interface Entity {
   update(w: World, dt: number): void;
   draw(w: World): void;
   drawLight?(w: World): void; // drawn after the night tint, additive
+  drawOver?(w: World): void;  // bubbles and arrows, drawn on top of everything in the world
 }
 
 export interface LevelDef {

@@ -70,7 +70,10 @@ export abstract class Friend implements Entity {
     ctx.scale(this.face, 1);
     this.drawBody(w, this.state === 'walk' && w.mode === 'play');
     ctx.restore();
+    this.drawOffscreen(w);
+  }
 
+  drawOver(w: World): void {
     if (this.waitA > 0.02 && this.waitingOn) {
       const b = this.waitingOn;
       drawBubble(this.x, this.y - this.height - 6, this.waitA, 70, () => b.drawIcon());
@@ -84,7 +87,6 @@ export abstract class Friend implements Entity {
       ctx.stroke(); ctx.fill();
       ctx.restore();
     }
-    this.drawOffscreen(w);
   }
 
   // Little badge at the screen edge when the friend is out of view.

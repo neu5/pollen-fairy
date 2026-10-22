@@ -1,11 +1,12 @@
 import { level01 } from './level01';
 import { level02 } from './level02';
+import { level03 } from './level03';
 import type { LevelDef } from '../game/types';
 
 // All 10 stops on the map. Levels not built yet have def: null (shown as "soon").
 export interface LevelSlot { id: number; name: string; icon: string; def: LevelDef | null }
 
-const built: LevelDef[] = [level01, level02];
+const built: LevelDef[] = [level01, level02, level03];
 
 const PLANNED: [string, string][] = [
   ['Sleepy Meadow', '🌼'], ["Snail's Slow Trip", '🐌'], ['Night Garden', '🌙'], ['Rainy Day', '🌧️'],

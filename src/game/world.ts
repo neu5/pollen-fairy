@@ -124,6 +124,22 @@ export function win(w: World, spot: { x: number; y: number }): void {
   w.player.frozen = true;
 }
 
+// How dark it is right now (0 = day, 1 = full night tint).
+export function nightAmount(w: World): number {
+  const a = w.theme.tint ? 1 : 0, b = w.nextTheme ? (w.nextTheme.tint ? 1 : 0) : a;
+  return (a + (b - a) * w.themeMix) * w.tintA;
+}
+
+// Slowly change the look of the level (night → day). Call every frame until it returns true.
+export function fadeTheme(w: World, id: string, dt: number, dur: number): boolean {
+  const next = THEMES[id];
+  if (w.theme === next) return true;
+  w.nextTheme = next;
+  w.themeMix = Math.min(1, w.themeMix + dt / dur);
+  if (w.themeMix >= 1) { w.theme = next; w.nextTheme = null; w.themeMix = 0; return true; }
+  return false;
+}
+
 export function playerNear(w: World, x: number, y: number, r: number): boolean {
   const p = w.player, dx = p.x - x, dy = p.y - 45 - y;
   return dx * dx + dy * dy < r * r;
