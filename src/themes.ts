@@ -161,4 +161,32 @@ const pond: Theme = {
   bushPlay: { dark: '#2a7a52', mid: '#38945e', light: '#62bb6c', flower: ['#ffffff', '#c3aaff', '#86dcff'] },
 };
 
-export const THEMES: Record<string, Theme> = { meadow, morning, night, rain, windy, pond };
+// Take the colour out of a theme (for the Grey Garden).
+function greyRgb(r: number, g: number, b: number, k: number): number[] {
+  const l = r * 0.3 + g * 0.59 + b * 0.11;
+  return [r, g, b].map(c => Math.round(c + (l - c) * k));
+}
+function desaturate<T>(v: T, k: number): T {
+  if (typeof v === 'string') {
+    if (/^#[0-9a-f]{6}$/i.test(v)) {
+      const n = parseInt(v.slice(1), 16);
+      return ('#' + greyRgb(n >> 16, (n >> 8) & 255, n & 255, k).map(c => c.toString(16).padStart(2, '0')).join('')) as T;
+    }
+    const rgba = v.match(/^rgba\((\d+),(\d+),(\d+),([\d.]+)\)$/);
+    if (rgba) return `rgba(${greyRgb(+rgba[1], +rgba[2], +rgba[3], k).join(',')},${rgba[4]})` as T;
+    const rgb = v.match(/^(\d+),(\d+),(\d+)$/);
+    if (rgb) return greyRgb(+rgb[1], +rgb[2], +rgb[3], k).join(',') as T;
+    return v;
+  }
+  if (Array.isArray(v)) return v.map(x => desaturate(x, k)) as T;
+  if (v && typeof v === 'object') {
+    const out: Record<string, unknown> = {};
+    for (const [key, x] of Object.entries(v)) out[key] = desaturate(x, k);
+    return out as T;
+  }
+  return v;
+}
+
+const grey: Theme = { ...desaturate(meadow, 0.82), id: 'grey', butterflies: false, rays: 0.5 };
+
+export const THEMES: Record<string, Theme> = { meadow, morning, night, rain, windy, pond, grey };
