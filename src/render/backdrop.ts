@@ -236,6 +236,20 @@ function buildBackdrop(t: Theme): Backdrop {
     ctx.restore();
   }
 
+  const drops = Array.from({ length: 140 }, () => ({ x: R() * 2000, y: R() * 1000, sp: 700 + R() * 300, l: 14 + R() * 12 }));
+  function drawRain(): void {
+    screenSpace();
+    ctx.strokeStyle = 'rgba(235,242,255,0.55)'; ctx.lineWidth = 1.6; ctx.lineCap = 'round';
+    ctx.beginPath();
+    const wx = V.viewW + 100, wy = V.viewH + 100;
+    for (const d of drops) {
+      const x = mod(d.x - V.camX * 1.2 - V.time * d.sp * 0.25, wx) - 50;
+      const y = mod(d.y + V.time * d.sp - (V.camY - V.camRest), wy) - 50;
+      ctx.moveTo(x, y); ctx.lineTo(x - d.l * 0.25, y + d.l);
+    }
+    ctx.stroke();
+  }
+
   function drawVignette(): void {
     screenSpace();
     const cx = V.viewW / 2, cy = V.viewH * 0.45;
@@ -276,6 +290,7 @@ function buildBackdrop(t: Theme): Backdrop {
       ctx.globalAlpha = 1;
     },
     drawFront() {
+      if (t.weather === 'rain') drawRain();
       drawItems(L.fg, 1.35, 1.15);
       drawItems(L.hang, 1.25, 0, V.camRest - 20); // pinned to screen top
       drawMotes();

@@ -121,4 +121,18 @@ const night: Theme = {
   butterflies: false, tint: '#5560a8', weather: 'fireflies',
 };
 
-export const THEMES: Record<string, Theme> = { meadow, morning, night };
+// Grey rainy day: soft blue-grey light, rain in front.
+const rain: Theme = {
+  ...meadow,
+  id: 'rain',
+  sky: [[0, '#7584a6'], [0.45, '#9eabc6'], [0.75, '#c3cadc'], [1, '#d6d3e2']],
+  sun: 'none', rays: 0, clouds: 1, cloudShade: 'rgba(140,150,180,0.95)',
+  range1: ['#a4a8c8', '#c8cadc'], range2: ['#92a6c4', '#c2cfdf'],
+  haze: ['200,208,225', '210,212,228'], hazeK: 1.4,
+  farHill: ['#a9c2c4', '#c6d6d8'], midHill: ['#87b096', '#a9c8b2'],
+  motes: '220,230,255', moteCount: 0,
+  vignette: '40,50,90',
+  butterflies: false, tint: '#c6cfe2', weather: 'rain',
+};
+
+export const THEMES: Record<string, Theme> = { meadow, morning, night, rain };
