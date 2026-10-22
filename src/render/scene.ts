@@ -1,4 +1,4 @@
-import { ctx, V, layer, screenSpace, visible } from '../engine/view';
+import { ctx, V, layer, visible, mainCtx, setCtx, offscreen } from '../engine/view';
 import { drawParticles, drawConfetti, glow } from '../engine/fx';
 import { getBackdrop } from './backdrop';
 import { drawBigTree, drawTreeLight, drawPlayBushes, drawGround, drawDecor, drawPlatforms, drawFlowers, drawFlowerLights } from './terrain';
@@ -8,6 +8,8 @@ import type { World } from '../game/types';
 import { nightAmount } from '../game/world';
 
 // Draws one frame of a world: backdrop → play layer → foreground → tint → lights → HUD.
+// At night the play layer is drawn on its own canvas and darkened there, so the sky
+// (already a night sky) and the moon stay as they are.
 
 export function renderWorld(w: World): void {
   ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -22,6 +24,16 @@ export function renderWorld(w: World): void {
     ctx.restore();
   }
   const playBack = next && w.themeMix > 0.5 ? next : back;
+
+  const night = nightAmount(w);
+  const tintCol = w.theme.tint ?? w.nextTheme?.tint;
+  const tinted = night > 0.001 && !!tintCol;
+  if (tinted) {
+    const a = offscreen(0);
+    a.setTransform(1, 0, 0, 1, 0, 0);
+    a.clearRect(0, 0, a.canvas.width, a.canvas.height);
+    setCtx(a);
+  }
 
   layer(1, 1);
   drawBigTree(w);
@@ -42,22 +54,24 @@ export function renderWorld(w: World): void {
 
   playBack.drawFront();
 
-  // night / rain tint over everything, then lights on top
-  const night = nightAmount(w);
-  const tintCol = w.theme.tint ?? w.nextTheme?.tint;
-  if (night > 0.001 && tintCol) {
-    screenSpace();
-    ctx.save();
-    ctx.globalCompositeOperation = 'multiply';
-    ctx.globalAlpha = night;
-    ctx.fillStyle = tintCol;
-    ctx.fillRect(0, 0, V.viewW, V.viewH);
-    ctx.restore();
-  }
-  if (night > 0.001) {
-    ctx.save(); ctx.globalCompositeOperation = 'lighter';
-    (w.nextTheme && w.themeMix > 0.5 ? getBackdrop(w.nextTheme) : back).drawSkyLight(night);
-    ctx.restore();
+  if (tinted) {
+    // darken the world canvas: multiply with the tint, keep only where something was drawn
+    const a = ctx, b = offscreen(1), wpx = a.canvas.width, hpx = a.canvas.height;
+    b.setTransform(1, 0, 0, 1, 0, 0);
+    b.clearRect(0, 0, wpx, hpx);
+    b.drawImage(a.canvas, 0, 0);
+    a.setTransform(1, 0, 0, 1, 0, 0);
+    a.globalCompositeOperation = 'multiply';
+    a.globalAlpha = night;
+    a.fillStyle = tintCol!;
+    a.fillRect(0, 0, wpx, hpx);
+    a.globalAlpha = 1;
+    a.globalCompositeOperation = 'destination-in';
+    a.drawImage(b.canvas, 0, 0);
+    a.globalCompositeOperation = 'source-over';
+    setCtx(mainCtx);
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.drawImage(a.canvas, 0, 0);
   }
   layer(1, 1);
   ctx.save(); ctx.globalCompositeOperation = 'lighter';
@@ -71,6 +85,7 @@ export function renderWorld(w: World): void {
   drawFairyLight(w, night);
   for (const e of w.entities) if (e.drawLight) { ctx.save(); e.drawLight(w); ctx.restore(); }
   ctx.restore();
+  playBack.drawAtmos();
 
   for (const e of w.entities) if (e.drawOver) { layer(1, 1); e.drawOver(w); }
   layer(1, 1);
