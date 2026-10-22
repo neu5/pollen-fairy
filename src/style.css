@@ -317,3 +317,7 @@ kbd {
 
 [hidden] { display: none !important; }
 #map { background: radial-gradient(ellipse at 50% 55%, rgba(255, 250, 240, 0.55), rgba(255, 255, 255, 0.25) 75%); }
+
+#map.tall .map-board { width: min(94vw, calc((100vh - 110px) * 560 / 1000)); aspect-ratio: 560 / 1000; }
+
+@media (pointer: coarse) { .keys { display: none; } }

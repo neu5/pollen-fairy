@@ -23,6 +23,7 @@ export abstract class Friend implements Entity {
   happyT = 0;
   walkT = 0;
   blockers: Blocker[] = [];
+  badge = true;                // show a badge at the screen edge when out of view
   private waitingOn: Blocker | null = null;
   private arrived = false;
   abstract height: number;
@@ -91,6 +92,7 @@ export abstract class Friend implements Entity {
 
   // Little badge at the screen edge when the friend is out of view.
   private drawOffscreen(w: World): void {
+    if (!this.badge) return;
     const l = V.camX + 50, r = V.camX + V.viewW - 50;
     if (this.x > l - 40 && this.x < r + 40) return;
     const left = this.x < l, x = left ? l : r, y = clamp(this.y - 40, V.camY + 120, V.camY + V.viewH - 80);

@@ -15,7 +15,7 @@ import { show, renderWho, askName, confirm, renderMap, showEnd, type ScreenId } 
 
 // Pollen Fairy — screens, game loop, level flow.
 
-window.addEventListener('resize', resize);
+window.addEventListener('resize', () => { resize(); if (screen === 'map') goMap(); });
 resize();
 
 const $ = (id: string) => document.getElementById(id) as HTMLElement;

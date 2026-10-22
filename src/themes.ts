@@ -255,4 +255,17 @@ const cave: Theme = {
   butterflies: false, tint: '#7a6cc0', weather: 'fireflies',
 };
 
-export const THEMES: Record<string, Theme> = { meadow, morning, night, rain, windy, pond, grey, autumn, cave };
+// Festival sunset: pink and gold sky.
+const sunset: Theme = {
+  ...meadow,
+  id: 'sunset',
+  sky: [[0, '#5a6ed0'], [0.4, '#b48ae0'], [0.66, '#ffb0c4'], [0.85, '#ffcf9a'], [1, '#ffe2a8']],
+  rays: 0.9, cloudShade: 'rgba(240,170,200,0.95)',
+  range1: ['#b48ad0', '#f2c6d8'], range2: ['#c49ad8', '#f6d0dc'],
+  haze: ['255,220,235', '255,214,190'],
+  farHill: ['#d8b0cc', '#f2d0dc'],
+  midHill: ['#c4a0c8', '#e4c4d6'],
+  motes: '255,230,200',
+};
+
+export const THEMES: Record<string, Theme> = { meadow, morning, night, rain, windy, pond, grey, autumn, cave, sunset };

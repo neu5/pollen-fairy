@@ -92,8 +92,15 @@ function pathD(pts: number[][]): string {
 }
 
 export function renderMap(p: Profile, play: (id: number) => void, back: () => void): void {
+  // tall phone screens get the same path turned on its side
+  const tall = window.innerHeight > window.innerWidth;
+  const W = tall ? 560 : 1000, H = tall ? 1000 : 560;
+  const pts = tall ? STONES.map(([x, y]) => [y, x]) : STONES;
+  const at = (i: number) => ({ left: `${pts[i][0] / W * 100}%`, top: `${pts[i][1] / H * 100}%` });
+  $('map').classList.toggle('tall', tall);
+  $('mapSvg').setAttribute('viewBox', `0 0 ${W} ${H}`);
   $('mapName').textContent = p.name;
-  $('mapPath').setAttribute('d', pathD(STONES));
+  $('mapPath').setAttribute('d', pathD(pts));
   $('mapBack').onclick = back;
   const box = $('stones');
   box.replaceChildren();
@@ -103,8 +110,7 @@ export function renderMap(p: Profile, play: (id: number) => void, back: () => vo
     const res = p.levels[slot.id];
     const open = Save.isOpen(p, slot.id) && !!slot.def;
     const b = el('button', 'stone');
-    b.style.left = `${STONES[i][0] / 10}%`;
-    b.style.top = `${STONES[i][1] / 5.6}%`;
+    Object.assign(b.style, at(i));
     b.classList.add(res?.done ? 'done' : open ? 'open' : slot.def ? 'locked' : 'soon');
     if (slot.id === current && !res?.done) b.classList.add('next');
     b.setAttribute('aria-label', `${slot.id}. ${slot.name}${open ? '' : ' (locked)'}`);
@@ -120,8 +126,7 @@ export function renderMap(p: Profile, play: (id: number) => void, back: () => vo
   });
   // fairy marker above the current stone
   const m = $('mapMarker');
-  m.style.left = `${STONES[current - 1][0] / 10}%`;
-  m.style.top = `${STONES[current - 1][1] / 5.6}%`;
+  Object.assign(m.style, at(current - 1));
   show('map');
 }
 
