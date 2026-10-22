@@ -321,3 +321,8 @@ kbd {
 #map.tall .map-board { width: min(94vw, calc((100vh - 110px) * 560 / 1000)); aspect-ratio: 560 / 1000; }
 
 @media (pointer: coarse) { .keys { display: none; } }
+.debug-tag {
+  position: fixed; left: 50%; bottom: 8px; translate: -50% 0; z-index: 10; pointer-events: none;
+  background: rgba(40, 20, 70, 0.75); color: #fff; font-size: 13px; font-weight: 700;
+  padding: 4px 12px; border-radius: 999px;
+}

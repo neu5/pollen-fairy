@@ -1,3 +1,5 @@
+import { DEBUG } from './debug';
+
 // Kid profiles + level progress in localStorage. Works (in memory only) if storage is blocked.
 
 export interface LevelResult { done: boolean; stars: number }
@@ -71,6 +73,6 @@ export const Save = {
 
   // Level n is open when it is the first one or the one before is done.
   isOpen(p: Profile, level: number): boolean {
-    return level === 1 || !!p.levels[level - 1]?.done;
+    return DEBUG || level === 1 || !!p.levels[level - 1]?.done;
   },
 };

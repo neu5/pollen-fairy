@@ -4,6 +4,7 @@ import { bindInput, releaseAll } from './engine/input';
 import { clearFx, spawnConfetti, updateFx } from './engine/fx';
 import { clamp, damp } from './util';
 import { Sound } from './sound';
+import { DEBUG } from './debug';
 import { createWorld, starsFor } from './game/world';
 import { updatePlayer } from './game/player';
 import type { World } from './game/types';
@@ -101,7 +102,25 @@ muteBtn.addEventListener('click', () => { Sound.init(); Sound.setMuted(!Sound.mu
 
 bindInput(code => {
   if (screen === 'title' && (code === 'Enter' || code === 'Space')) { Sound.init(); goWho(); }
+  if (!DEBUG || !profile) return;
+  // debug keys: N = finish this level now, 1…9 / 0 = jump to level 1…10
+  if (code === 'KeyN' && screen === 'level' && world.mode === 'play') debugWin();
+  const digit = code.match(/^Digit(\d)$/);
+  if (digit && (screen === 'level' || screen === 'map' || screen === 'end')) startLevel(+digit[1] || 10);
 });
+
+function debugWin(): void {
+  world.player.frozen = true;
+  world.finaleSpot = { x: world.player.x, y: world.player.y - 100 };
+  world.mode = 'finale'; world.finaleT = 0;
+}
+
+if (DEBUG) {
+  const tag = document.createElement('div');
+  tag.className = 'debug-tag';
+  tag.textContent = 'DEBUG · N = win · 1-0 = level';
+  document.body.append(tag);
+}
 
 // --------------------------------------------------------------- loop ----
 function update(dt: number): void {
@@ -154,15 +173,17 @@ snapCamera();
 setScreen('title');
 requestAnimationFrame(frame);
 
-// debug hook for testing: __pf.goto(2), __pf.win()
-(window as unknown as { __pf: unknown }).__pf = {
-  get world() { return world; },
-  get screen() { return screen; },
-  goto(id: number) { if (!profile) profile = Save.last() ?? Save.add('Test'); startLevel(id); },
-  win() { world.mode = 'play'; world.player.frozen = true; world.finaleSpot = { x: world.player.x, y: world.player.y - 100 }; world.mode = 'finale'; world.finaleT = 0; },
-  levels: LEVELS,
-  // run the game forward without drawing: __pf.step(5)
-  step(sec: number) { for (let i = 0; i < sec * 60; i++) update(1 / 60); renderWorld(world); },
-  // move the fairy: __pf.tp(1200, 400)
-  tp(x: number, y?: number) { const p = world.player; p.x = x; p.y = y ?? world.ground(x); p.vy = 0; snapCamera(); },
-};
+// console helpers in debug mode: __pf.goto(2), __pf.win(), __pf.step(5), __pf.tp(1200, 400)
+if (DEBUG) {
+  (window as unknown as { __pf: unknown }).__pf = {
+    get world() { return world; },
+    get screen() { return screen; },
+    goto(id: number) { if (!profile) profile = Save.last() ?? Save.add('Test'); startLevel(id); },
+    win: debugWin,
+    levels: LEVELS,
+    // run the game forward without drawing
+    step(sec: number) { for (let i = 0; i < sec * 60; i++) update(1 / 60); renderWorld(world); },
+    // move the fairy
+    tp(x: number, y?: number) { const p = world.player; p.x = x; p.y = y ?? world.ground(x); p.vy = 0; snapCamera(); },
+  };
+}
