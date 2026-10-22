@@ -250,6 +250,20 @@ function buildBackdrop(t: Theme): Backdrop {
     ctx.stroke();
   }
 
+  const falling = Array.from({ length: 34 }, () => ({ x: R() * 2000, y: R() * 1000, sp: 40 + R() * 50, ph: R() * TAU, s: 5 + R() * 5, c: pick(R, ['#f29c4a', '#ea7050', '#ecc040', '#d4553e']) }));
+  function drawLeaves(): void {
+    screenSpace();
+    const wx = V.viewW + 100, wy = V.viewH + 100;
+    for (const f of falling) {
+      const x = mod(f.x - V.camX * 1.15 + Math.sin(V.time * 0.8 + f.ph) * 40 + V.time * 15, wx) - 50;
+      const y = mod(f.y + V.time * f.sp - (V.camY - V.camRest), wy) - 50;
+      const r = V.time * 2 + f.ph;
+      ctx.save(); ctx.translate(x, y); ctx.rotate(r); ctx.scale(1, Math.abs(Math.cos(r * 0.7)) * 0.8 + 0.2);
+      ctx.fillStyle = f.c; ctx.beginPath(); ctx.ellipse(0, 0, f.s, f.s * 0.55, 0, 0, TAU); ctx.fill();
+      ctx.restore();
+    }
+  }
+
   function drawVignette(): void {
     screenSpace();
     const cx = V.viewW / 2, cy = V.viewH * 0.45;
@@ -291,6 +305,7 @@ function buildBackdrop(t: Theme): Backdrop {
     },
     drawFront() {
       if (t.weather === 'rain') drawRain();
+      if (t.weather === 'leaves') drawLeaves();
       drawItems(L.fg, 1.35, 1.15);
       drawItems(L.hang, 1.25, 0, V.camRest - 20); // pinned to screen top
       drawMotes();

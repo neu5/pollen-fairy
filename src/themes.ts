@@ -189,4 +189,36 @@ function desaturate<T>(v: T, k: number): T {
 
 const grey: Theme = { ...desaturate(meadow, 0.82), id: 'grey', butterflies: false, rays: 0.5 };
 
-export const THEMES: Record<string, Theme> = { meadow, morning, night, rain, windy, pond, grey };
+// Golden autumn woods with falling leaves.
+const autumn: Theme = {
+  ...meadow,
+  id: 'autumn',
+  sky: [[0, '#6fb2e0'], [0.45, '#b4dcf2'], [0.72, '#ffe2c4'], [0.88, '#ffcfa8'], [1, '#ffbfa8']],
+  range1: ['#cdb0d8', '#f6dfe0'], range2: ['#c2b4d8', '#f0e2e8'],
+  haze: ['255,240,225', '255,222,200'],
+  farHill: ['#e2c8a8', '#f2e2cc'],
+  far: [
+    { trunk: '#b8a090', dark: '#e8b88e', mid: '#f2cba4', light: '#fae0c2' },
+    { trunk: '#b8a090', dark: '#e8a8a0', mid: '#f2bcb4', light: '#fad4cc' },
+  ],
+  midHill: ['#d8b070', '#ead0a0'],
+  mid: [
+    { trunk: '#7a5f58', dark: '#e0803a', mid: '#f29c4a', light: '#ffc46a' },
+    { trunk: '#7a5f58', dark: '#d4553e', mid: '#ea7050', light: '#ff9a70' },
+    { trunk: '#7a5f58', dark: '#d8a830', mid: '#ecc040', light: '#ffe070' },
+  ],
+  near: [
+    { trunk: '#6a4f45', trunkLight: '#9a7663', dark: '#b8502e', mid: '#d06a36', light: '#f09a4a' },
+    { trunk: '#5f4a4a', trunkLight: '#8f6f6a', dark: '#c08a24', mid: '#d8a830', light: '#f2cc5a' },
+  ],
+  backHill: ['#c49a4a', '#a07a3a'],
+  bushBack: { dark: '#b0703a', mid: '#c8884a', light: '#e2a860', flower: ['#ffe070', '#ff9a70'] },
+  bushPlay: { dark: '#9a5a2e', mid: '#b8743a', light: '#dc9a4e', flower: ['#ffd166', '#ff8a5a', '#ffffff'] },
+  fern: '#b06a36',
+  grass: ['#a8983a', '#bba84a', '#e2d27a'],
+  fg: '#6a3a1e', fgLeaf: '#7a3e1e', hang: '#6a3a1e',
+  motes: '255,220,170',
+  butterflies: false, weather: 'leaves',
+};
+
+export const THEMES: Record<string, Theme> = { meadow, morning, night, rain, windy, pond, grey, autumn };
