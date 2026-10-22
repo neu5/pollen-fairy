@@ -3,7 +3,20 @@
 export const VIEW_H = 720;
 export const IS_TOUCH = window.matchMedia('(pointer: coarse)').matches;
 export const cvs = document.getElementById('game') as HTMLCanvasElement;
-export const ctx = cvs.getContext('2d') as CanvasRenderingContext2D;
+export const mainCtx = cvs.getContext('2d') as CanvasRenderingContext2D;
+// Everything draws to `ctx`. It is normally the screen, but can be pointed at an
+// offscreen canvas (night: the world is drawn apart so the sky is not darkened).
+export let ctx = mainCtx;
+export function setCtx(c: CanvasRenderingContext2D): void { ctx = c; }
+
+const offs: CanvasRenderingContext2D[] = [];
+// Screen-sized offscreen canvas number i (reused between frames).
+export function offscreen(i: number): CanvasRenderingContext2D {
+  let c = offs[i];
+  if (!c) { c = document.createElement('canvas').getContext('2d') as CanvasRenderingContext2D; offs[i] = c; }
+  if (c.canvas.width !== cvs.width || c.canvas.height !== cvs.height) { c.canvas.width = cvs.width; c.canvas.height = cvs.height; }
+  return c;
+}
 
 export const V = {
   scale: 1, viewW: 1280, viewH: 720, camRest: 0,
