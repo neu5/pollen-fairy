@@ -33,6 +33,8 @@ export function drawHedgehog(got: number): void {
     ctx.lineTo(-6 + Math.cos(a) * r * 1.2, -14 + Math.sin(a) * r);
   }
   ctx.closePath(); ctx.fill();
+  // solid round body under the spikes (the spikes only cover the top)
+  ctx.fillStyle = '#8a6a54'; ctx.beginPath(); ctx.ellipse(-4, -13, 31, 13, 0, 0, TAU); ctx.fill();
   ctx.fillStyle = '#d8b08a'; ctx.beginPath(); ctx.ellipse(16, -12, 14, 11, 0.2, 0, TAU); ctx.fill();
   ctx.fillStyle = '#2d2438'; circle(ctx, 29, -12, 3.5); circle(ctx, 18, -16, 2.4);
   ctx.fillStyle = '#fff'; circle(ctx, 18.8, -16.8, 0.8);
@@ -94,7 +96,7 @@ function drawMouse(walk: number, happy: boolean): void {
 
 export class Mouse extends Friend {
   height = 44;
-  constructor(x: number, homeX: number) { super(x, 70, homeX); }
+  constructor(x: number, homeX: number) { super(x, 120, homeX); }
   drawMini(): void { ctx.translate(-6, 8); drawMouse(0, true); }
   drawBody(_w: World, moving: boolean): void { ctx.scale(1.3, 1.3); drawMouse(moving ? this.walkT * 14 : 0, this.state !== 'wait'); }
 }
@@ -117,14 +119,19 @@ export function glowWorms(pts: { x: number; y: number }[]): OrderGame {
   return new OrderGame(items, () => {}, 58);
 }
 
-// Mouse waits until all the worms are glowing, then runs home.
-export function orderBlocker(game: OrderGame, stopX: number, icon: () => void): Blocker {
-  return {
-    stopX,
-    get cleared() { return game.complete; },
-    drawIcon: icon,
-    target: () => { const it = game.items[Math.min(game.got, game.items.length - 1)]; return { x: it.x, y: it.y + 50 }; },
-  };
+// One stop per worm: Mouse runs on as soon as the next worm is glowing.
+// Stops never go backwards, so a worm placed a bit to the left is passed by already.
+export function orderBlockers(game: OrderGame, startX: number, icon: (n: number) => void): Blocker[] {
+  let far = startX;
+  return game.items.map((it, i) => {
+    far = Math.max(far, it.x - 60);
+    return {
+      stopX: far,
+      get cleared() { return game.got > i; },
+      drawIcon: () => icon(i + 1),
+      target: () => ({ x: it.x, y: it.y + 50 }),
+    };
+  });
 }
 
 // --------------------------------------------------------------- stars ----

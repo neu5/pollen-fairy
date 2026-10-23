@@ -1,4 +1,4 @@
-import { Mouse, glowWorms, orderBlocker } from '../../entities/night2';
+import { Mouse, glowWorms, orderBlockers } from '../../entities/night2';
 import { MushroomHouse } from '../../entities/obstacles';
 import { numberBadge } from '../../entities/order';
 import { win } from '../../game/world';
@@ -25,7 +25,7 @@ export const l2_05: LevelDef = {
       at(1700), at(2000, 330), at(2260), at(2700), at(2560, 180),
     ]);
     const mouse = new Mouse(380, 3150);
-    mouse.blockers = [orderBlocker(game, 420, () => numberBadge(1, false, 16))];
+    mouse.blockers = orderBlockers(game, 420, n => numberBadge(n, false, 16));
     mouse.onHome = ww => win(ww, { x: 3000, y: ww.ground(3000) - 170 });
     w.entities.push(new MushroomHouse(3240, { cap: '#b48cff', cap2: '#8762e0', spot: '#fff4c2' }), game, mouse);
   },
