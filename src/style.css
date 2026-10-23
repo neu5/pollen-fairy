@@ -446,3 +446,21 @@ html, body, #game, .tbtn { touch-action: none; }
 .again-icon { font-size: 64px; }
 .clock-pair .pill svg { width: 34px; height: 34px; }
 .clock-pair.short .pill svg { width: 26px; height: 26px; }
+
+/* ---------- number picker ---------- */
+#numbers { background: rgba(60, 40, 110, 0.35); z-index: 8; }
+.numbers-card { position: relative; max-width: 620px; gap: 16px; padding: 24px 26px; }
+.numbers-card .kid-del { top: 10px; right: 10px; left: auto; }
+.numbers-ask { font-size: clamp(30px, 6vw, 46px); font-weight: 700; color: #5b3a8c; display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; justify-content: center; line-height: 1.1; }
+.numbers-ask .group { display: inline-flex; flex-wrap: wrap; gap: 8px; max-width: 220px; justify-content: center; background: #fff4cc; padding: 6px 10px; border-radius: 18px; }
+.numbers-pad { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+.numbers-pad button {
+  width: clamp(54px, 13vw, 84px); height: clamp(64px, 15vw, 96px); border: 0; border-radius: 22px; background: #f3ecff; box-shadow: 0 5px 0 #c9b8f0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font: inherit; font-size: clamp(26px, 6vw, 38px); font-weight: 700; color: #5b3a8c;
+}
+.numbers-pad button:active { translate: 0 4px; box-shadow: 0 1px 0 #c9b8f0; }
+.numbers-pad .dots { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px; max-width: 46px; }
+.numbers-pad .dots i { width: 6px; height: 6px; border-radius: 50%; background: #ffb43a; }
+.numbers-pad button.no { animation: shake 0.4s; background: #ffd6e4; }
+.numbers-pad button.hint { box-shadow: 0 5px 0 #f0b850, 0 0 0 4px #ffcf3a inset; background: #fff4cc; }
+.numbers-pad button.yes { background: #c8f5c8; box-shadow: 0 5px 0 #7ed08a; }

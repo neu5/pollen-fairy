@@ -38,6 +38,16 @@ import { l4_07 } from './ch4/l07';
 import { l4_08 } from './ch4/l08';
 import { l4_09 } from './ch4/l09';
 import { l4_10 } from './ch4/l10';
+import { l5_01 } from './ch5/l01';
+import { l5_02 } from './ch5/l02';
+import { l5_03 } from './ch5/l03';
+import { l5_04 } from './ch5/l04';
+import { l5_05 } from './ch5/l05';
+import { l5_06 } from './ch5/l06';
+import { l5_07 } from './ch5/l07';
+import { l5_08 } from './ch5/l08';
+import { l5_09 } from './ch5/l09';
+import { l5_10 } from './ch5/l10';
 import type { LevelDef } from '../game/types';
 
 // 5 chapters × 10 levels. Level keys are 'chapter-level', e.g. '2-3'.
@@ -52,6 +62,7 @@ const built: LevelDef[] = [level01, level02, level03, level04, level05, level06,
   l2_01, l2_02, l2_03, l2_04, l2_05, l2_06, l2_07, l2_08, l2_09, l2_10,
   l3_01, l3_02, l3_03, l3_04, l3_05, l3_06, l3_07, l3_08, l3_09, l3_10,
   l4_01, l4_02, l4_03, l4_04, l4_05, l4_06, l4_07, l4_08, l4_09, l4_10,
+  l5_01, l5_02, l5_03, l5_04, l5_05, l5_06, l5_07, l5_08, l5_09, l5_10,
 ];
 
 const ICONS: string[][] = [

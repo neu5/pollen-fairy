@@ -394,4 +394,45 @@ const sea: Theme = {
   butterflies: false, weather: 'bubbles',
 };
 
-export const THEMES: Record<string, Theme> = { meadow, morning, night, rain, windy, pond, grey, autumn, cave, sunset, dusk, spring, summer, winter, beach, sea };
+// High mountains: rocky hills, pine woods, cool clear air.
+const mountain: Theme = {
+  ...meadow,
+  id: 'mountain',
+  sky: [[0, '#3a8ee0'], [0.45, '#86c4f2'], [0.72, '#d0ecfa'], [0.9, '#eef4f8'], [1, '#f8f0f0']],
+  range1: ['#a8b4d8', '#e8ecf6'], range2: ['#8a9cc4', '#dce4f2'], castle: false,
+  farHill: ['#9cb4b8', '#c8d8dc'],
+  far: [
+    { trunk: '#6a7a8a', dark: '#6a9a98', mid: '#84b0aa', light: '#a8ccc4' },
+    { trunk: '#6a7a8a', dark: '#5a8a88', mid: '#74a49c', light: '#9cc4b8' },
+  ],
+  midHill: ['#8aa88a', '#a8c4a4'],
+  mid: [
+    { trunk: '#5a5a6a', dark: '#3a7a5a', mid: '#4a946a', light: '#78b888' },
+    { trunk: '#5a5a6a', dark: '#2f6a50', mid: '#3e845e', light: '#6aaa7a' },
+  ],
+  backHill: ['#8aa070', '#6a8458'],
+  dirt: ['#9a8a7a', '#7a6a64', '#5a4a50'],
+  grass: ['#5a9a48', '#68ac54', '#9ad478'],
+  butterflies: false,
+};
+
+// Snowy peak: like the mountain, but white and cold.
+const peak: Theme = { ...winter, id: 'peak', range1: ['#c0c8e4', '#f6f8fc'], range2: ['#a8b8dc', '#eef2fa'], castle: false, mid: mountain.mid };
+
+// Up in the sky: walking on clouds, the castle far away.
+const sky: Theme = {
+  ...sunset,
+  id: 'sky',
+  sky: [[0, '#4a8ae0'], [0.4, '#8ec0f4'], [0.66, '#d4e8fc'], [0.85, '#ffe4ee'], [1, '#ffd8c8']],
+  range1: ['#d8e4f8', '#f4f6fc'], range2: ['#e4ecfa', '#ffffff'], castle: true,
+  farHill: ['#f0f4fc', '#ffffff'], far: [{ trunk: '#e8eef8', dark: '#e4ecf8', mid: '#f0f4fc', light: '#ffffff' }],
+  midHill: ['#f4f6fc', '#ffffff'], mid: [{ trunk: '#e8eef8', dark: '#eaf0fa', mid: '#f4f8fe', light: '#ffffff' }],
+  backHill: ['#ffffff', '#eef2fa'],
+  bushBack: { dark: '#e4ecf8', mid: '#f0f4fc', light: '#ffffff', flower: ['#ffd6e8', '#fff3b0'] },
+  bushPlay: { dark: '#dce6f6', mid: '#eef2fc', light: '#ffffff', flower: ['#ffb3d6', '#ffe066'] },
+  dirt: ['#eef2fa', '#e0e8f6', '#d0dcf0'], grass: ['#f4f6fc', '#ffffff', '#ffffff'], tuft: ['#e0e8f6', '#ffffff'],
+  fg: '#e8eef8', fgLeaf: '#f0f4fc', hang: '#f0f4fc',
+  butterflies: true,
+};
+
+export const THEMES: Record<string, Theme> = { meadow, morning, night, rain, windy, pond, grey, autumn, cave, sunset, dusk, spring, summer, winter, beach, sea, mountain, peak, sky };

@@ -20,6 +20,7 @@ export class OrderGame implements Entity {
   doneT = -1;
   lines = false;               // draw lines between lit items (dot-to-dot)
   lineColor = 'rgba(255,240,180,0.9)';
+  onTop = false;               // draw above the night darkness (for pictures that must stay clear)
   constructor(public items: OrderItem[], public onDone: (w: World) => void, public r = 60) {
     this.wiggle = items.map(() => 0);
     this.wasNear = items.map(() => false);
@@ -43,7 +44,10 @@ export class OrderGame implements Entity {
     });
   }
 
-  draw(): void {
+  draw(): void { if (!this.onTop) this.paint(); }
+  drawOver(): void { if (this.onTop) this.paint(); }
+
+  private paint(): void {
     if (this.lines && this.got > 1) {
       ctx.strokeStyle = this.lineColor; ctx.lineWidth = 5; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
       ctx.beginPath();
