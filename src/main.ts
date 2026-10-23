@@ -112,7 +112,25 @@ document.querySelectorAll<HTMLButtonElement>('#langs button').forEach(b => {
 });
 onLangChange(() => { if (screen === 'who') goWho(); });
 applyDom();
-$('home').addEventListener('click', () => { goMap(); });
+$('home').addEventListener('click', () => { pause(); $('home').blur(); });
+$('pausePlay').addEventListener('click', resume);
+$('pauseMap').addEventListener('click', goMap);
+$('pauseReplay').addEventListener('click', () => startLevel(world.def.id));
+
+// Pause keeps the level exactly as it is; Play goes on from the same spot.
+function pause(): void {
+  if (screen !== 'level' || world.mode !== 'play') return;
+  releaseAll();
+  setScreen('pause');
+}
+function resume(): void {
+  if (screen !== 'pause') return;
+  last = performance.now();
+  setScreen('level');
+}
+// leaving the tab or window pauses too
+document.addEventListener('visibilitychange', () => { if (document.hidden) pause(); });
+window.addEventListener('blur', pause);
 
 const muteBtn = $('mute');
 const syncMute = () => muteBtn.classList.toggle('off', Sound.muted);
@@ -121,6 +139,8 @@ muteBtn.addEventListener('click', () => { Sound.init(); Sound.setMuted(!Sound.mu
 
 bindInput(code => {
   if (screen === 'title' && (code === 'Enter' || code === 'Space')) { Sound.init(); goWho(); }
+  if (code === 'Escape' || code === 'KeyP') { if (screen === 'level') pause(); else if (screen === 'pause') resume(); }
+  else if (screen === 'pause' && (code === 'Enter' || code === 'Space')) resume();
   if (!DEBUG || !profile) return;
   // debug keys: N = finish this level now, 1…9 / 0 = jump to level 1…10
   if (code === 'KeyN' && screen === 'level' && world.mode === 'play') debugWin();
@@ -185,7 +205,7 @@ let last = performance.now();
 function frame(now: number): void {
   const dt = clamp((now - last) / 1000, 0, 0.033);
   last = now;
-  update(dt);
+  if (screen !== 'pause') update(dt);
   renderWorld(world);
   requestAnimationFrame(frame);
 }
