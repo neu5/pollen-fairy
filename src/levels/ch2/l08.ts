@@ -26,6 +26,7 @@ export const l2_08: LevelDef = {
       new HidingCub(3150, DEN_X),
     ];
     const den = new FoxDen(DEN_X, cubs);
-    w.entities.push(den, ...cubs, new Countdown(90, true, () => den.done));
+    // the timer stops once every cub is found, so the run home never runs out of time
+    w.entities.push(den, ...cubs, new Countdown(90, true, () => cubs.every(c => c.found)));
   },
 };

@@ -249,12 +249,14 @@ export class HidingCub implements Entity {
     }
     if (this.found) this.t += dt;
   }
-  get home() { return this.found && this.t > 1.5; }
+  // a steady little run home, however far it is (about 300 px a second)
+  get runTime() { return Math.max(1.5, Math.abs(this.homeX - this.x) / 300); }
+  get home() { return this.found && this.t > this.runTime; }
   draw(w: World): void {
     const by = this.baseY(w);
     if (this.found) {
-      const u = clamp(this.t / 1.5, 0, 1), x = this.x + (this.homeX - this.x) * ease(u);
-      const hop = Math.abs(Math.sin(this.t * 12)) * 14 * (1 - u);
+      const u = clamp(this.t / this.runTime, 0, 1), x = this.x + (this.homeX - this.x) * u;
+      const hop = Math.abs(Math.sin(this.t * 9)) * 12 * (u < 1 ? 1 : 0);
       if (u < 1 && visible(x - 50, x + 50)) {
         ctx.save(); ctx.translate(x, (this.y != null ? by + (w.ground(this.homeX) - by) * u : w.ground(x)) - hop); ctx.scale(this.homeX < this.x ? -1 : 1, 1); drawFox(0.8, true); ctx.restore();
       }
