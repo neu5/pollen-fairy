@@ -119,7 +119,7 @@ export function drawDecor(w: World): void {
     switch (d.type) {
       case 'tuft': {
         const sw = Math.sin(time * 1.6 + d.ph) * 2.5 * s;
-        ctx.fillStyle = d.dark ? '#3f9f45' : '#6fcf55';
+        ctx.fillStyle = d.dark ? (w.theme.tuft?.[0] ?? '#3f9f45') : (w.theme.tuft?.[1] ?? '#6fcf55');
         for (let i = -2; i <= 2; i++) {
           const bx = d.x + i * 3 * s, bh = (15 - Math.abs(i) * 3) * s;
           ctx.beginPath(); ctx.moveTo(bx - 2 * s, gy + 2);

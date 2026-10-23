@@ -2,7 +2,7 @@ import type { TreePal, BushPal } from './art';
 
 // A theme is the whole look of a level: sky, background layers, ground and light.
 
-export type Weather = 'none' | 'rain' | 'leaves' | 'fireflies';
+export type Weather = 'none' | 'rain' | 'leaves' | 'fireflies' | 'snow' | 'petals';
 
 export interface Theme {
   id: string;
@@ -38,6 +38,7 @@ export interface Theme {
   butterflies: boolean;
   tint: string | null;             // multiply over the play layer (night, rain)
   rocks?: boolean;                 // cave: stalagmites instead of trees, stalactites on top
+  tuft?: [string, string];         // little grass tufts (dark, light); default green
   nearTrees?: boolean;             // draw the big near trees (default yes)
   weather: Weather;
 }
@@ -280,4 +281,63 @@ const dusk: Theme = {
   tint: '#a29ad8', moteCount: 40,
 };
 
-export const THEMES: Record<string, Theme> = { meadow, morning, night, rain, windy, pond, grey, autumn, cave, sunset, dusk };
+// Fresh spring: blossom trees, falling petals.
+const spring: Theme = {
+  ...meadow,
+  id: 'spring',
+  sky: [[0, '#5ab4ee'], [0.45, '#a2dcfa'], [0.72, '#e2f4f6'], [0.88, '#fde8ee'], [1, '#ffd8e6']],
+  mid: [
+    { trunk: '#7b6f8e', dark: '#e195bd', mid: '#f2b1cf', light: '#ffd6e8' },
+    { trunk: '#6e7f8f', dark: '#86c866', mid: '#a0dc78', light: '#cbf0a0' },
+    { trunk: '#7b6f8e', dark: '#f0b0c8', mid: '#ffc8dc', light: '#ffe6f0' },
+  ],
+  grass: ['#58b848', '#66c854', '#a2ee78'],
+  weather: 'petals',
+};
+
+// Bright summer: warm light, strong colours.
+const summer: Theme = {
+  ...meadow,
+  id: 'summer',
+  sky: [[0, '#3a9ee8'], [0.45, '#7ccaf6'], [0.72, '#c4ecfa'], [0.88, '#fff0c8'], [1, '#ffe0a8']],
+  rays: 1.2,
+  midHill: ['#7cc890', '#a8dcb0'], backHill: ['#62b868', '#4a9a58'],
+  grass: ['#4aa83e', '#58ba48', '#94e468'],
+  haze: ['240,248,255', '255,240,210'],
+};
+
+// Snowy winter: white ground, falling snow.
+const winter: Theme = {
+  ...meadow,
+  id: 'winter',
+  sky: [[0, '#7ab0e0'], [0.45, '#b4d8f2'], [0.72, '#e4f0fa'], [0.9, '#f4f0f8'], [1, '#f8eef4']],
+  sun: 'sun', rays: 0.5, clouds: 1, cloudShade: 'rgba(200,210,235,0.95)',
+  range1: ['#c8d4ee', '#f4f6fc'], range2: ['#b8cce8', '#eef2fa'],
+  haze: ['240,246,255', '245,242,250'], hazeK: 1.3,
+  farHill: ['#e4ecf6', '#f4f8fc'],
+  far: [
+    { trunk: '#9aa8c0', dark: '#b8c8dc', mid: '#d0dcea', light: '#eef4fa' },
+    { trunk: '#9aa8c0', dark: '#a8bcd4', mid: '#c4d4e6', light: '#e8f0f8' },
+  ],
+  midHill: ['#dce6f2', '#eef2f8'],
+  mid: [
+    { trunk: '#7a8498', dark: '#7aa094', mid: '#9cbab0', light: '#f4f8fa' },
+    { trunk: '#7a8498', dark: '#8aa8b8', mid: '#a8c4d0', light: '#f4f8fa' },
+    { trunk: '#7a8498', dark: '#6a9488', mid: '#8ab0a4', light: '#f0f6f8' },
+  ],
+  near: [
+    { trunk: '#6a5a58', trunkLight: '#9a8680', dark: '#5a8478', mid: '#7aa094', light: '#eef4f6' },
+    { trunk: '#5f5050', trunkLight: '#8f7a76', dark: '#6a8a90', mid: '#8aa8ae', light: '#eef4f6' },
+  ],
+  backHill: ['#e8eef6', '#cdd8e6'],
+  bushBack: { dark: '#a8bcc8', mid: '#c4d4de', light: '#f0f6fa', flower: ['#ffffff'] },
+  bushPlay: { dark: '#6a9a88', mid: '#88b4a4', light: '#eef6f4', flower: ['#e8455a', '#ffffff'] },
+  fern: '#6a9a88',
+  dirt: ['#a89a9a', '#8a7a80', '#6a5a66'],
+  grass: ['#dce6f0', '#eef2f8', '#ffffff'], tuft: ['#b8cad8', '#dfe8f0'],
+  fg: '#7a94a8', fgLeaf: '#6a8a9c', hang: '#8aa0b4',
+  motes: '255,255,255', moteCount: 20,
+  butterflies: false, weather: 'snow',
+};
+
+export const THEMES: Record<string, Theme> = { meadow, morning, night, rain, windy, pond, grey, autumn, cave, sunset, dusk, spring, summer, winter };

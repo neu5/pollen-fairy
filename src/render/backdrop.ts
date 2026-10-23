@@ -268,6 +268,31 @@ function buildBackdrop(t: Theme): Backdrop {
     }
   }
 
+  const flakes = Array.from({ length: 90 }, () => ({ x: R() * 2000, y: R() * 1000, sp: 30 + R() * 40, r: 1.5 + R() * 2.5, ph: R() * TAU }));
+  function drawSnow(): void {
+    screenSpace();
+    ctx.fillStyle = 'rgba(255,255,255,0.9)';
+    const wx = V.viewW + 60, wy = V.viewH + 60;
+    for (const f of flakes) {
+      const x = mod(f.x - V.camX * 1.1 + Math.sin(V.time * 0.7 + f.ph) * 30, wx) - 30;
+      const y = mod(f.y + V.time * f.sp - (V.camY - V.camRest), wy) - 30;
+      circle(ctx, x, y, f.r);
+    }
+  }
+  function drawPetals(): void {
+    screenSpace();
+    const wx = V.viewW + 60, wy = V.viewH + 60;
+    for (let i = 0; i < 30; i++) {
+      const f = flakes[i];
+      const x = mod(f.x - V.camX * 1.15 + Math.sin(V.time * 0.8 + f.ph) * 50 + V.time * 12, wx) - 30;
+      const y = mod(f.y + V.time * f.sp * 0.8 - (V.camY - V.camRest), wy) - 30;
+      const r = V.time * 2 + f.ph;
+      ctx.save(); ctx.translate(x, y); ctx.rotate(r); ctx.scale(1, Math.abs(Math.cos(r * 0.7)) * 0.7 + 0.3);
+      ctx.fillStyle = i % 3 ? '#ffc8dc' : '#ffffff'; ctx.beginPath(); ctx.ellipse(0, 0, 5, 3, 0, 0, TAU); ctx.fill();
+      ctx.restore();
+    }
+  }
+
   function drawVignette(): void {
     screenSpace();
     const cx = V.viewW / 2, cy = V.viewH * 0.45;
@@ -301,6 +326,8 @@ function buildBackdrop(t: Theme): Backdrop {
     drawFront() {
       if (t.weather === 'rain') drawRain();
       if (t.weather === 'leaves') drawLeaves();
+      if (t.weather === 'snow') drawSnow();
+      if (t.weather === 'petals') drawPetals();
       drawItems(L.fg, 1.35, 1.15);
       drawItems(L.hang, 1.25, 0, V.camRest - 20); // pinned to screen top
     },

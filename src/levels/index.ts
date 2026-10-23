@@ -18,6 +18,16 @@ import { l2_07 } from './ch2/l07';
 import { l2_08 } from './ch2/l08';
 import { l2_09 } from './ch2/l09';
 import { l2_10 } from './ch2/l10';
+import { l3_01 } from './ch3/l01';
+import { l3_02 } from './ch3/l02';
+import { l3_03 } from './ch3/l03';
+import { l3_04 } from './ch3/l04';
+import { l3_05 } from './ch3/l05';
+import { l3_06 } from './ch3/l06';
+import { l3_07 } from './ch3/l07';
+import { l3_08 } from './ch3/l08';
+import { l3_09 } from './ch3/l09';
+import { l3_10 } from './ch3/l10';
 import type { LevelDef } from '../game/types';
 
 // 5 chapters × 10 levels. Level keys are 'chapter-level', e.g. '2-3'.
@@ -30,6 +40,7 @@ export interface Chapter { id: number; icon: string; color: string; levels: Leve
 
 const built: LevelDef[] = [level01, level02, level03, level04, level05, level06, level07, level08, level09, level10,
   l2_01, l2_02, l2_03, l2_04, l2_05, l2_06, l2_07, l2_08, l2_09, l2_10,
+  l3_01, l3_02, l3_03, l3_04, l3_05, l3_06, l3_07, l3_08, l3_09, l3_10,
 ];
 
 const ICONS: string[][] = [
