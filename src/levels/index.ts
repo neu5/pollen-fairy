@@ -8,6 +8,9 @@ import { level07 } from './level07';
 import { level08 } from './level08';
 import { level09 } from './level09';
 import { level10 } from './level10';
+import { l2_01 } from './ch2/l01';
+import { l2_02 } from './ch2/l02';
+import { l2_03 } from './ch2/l03';
 import type { LevelDef } from '../game/types';
 
 // 5 chapters × 10 levels. Level keys are 'chapter-level', e.g. '2-3'.
@@ -18,7 +21,9 @@ export const PER_CHAPTER = 10;
 export interface LevelSlot { key: string; chapter: number; n: number; icon: string; def: LevelDef | null }
 export interface Chapter { id: number; icon: string; color: string; levels: LevelSlot[] }
 
-const built: LevelDef[] = [level01, level02, level03, level04, level05, level06, level07, level08, level09, level10];
+const built: LevelDef[] = [level01, level02, level03, level04, level05, level06, level07, level08, level09, level10,
+  l2_01, l2_02, l2_03,
+];
 
 const ICONS: string[][] = [
   ['🌼', '🐌', '🌙', '🌧️', '🐦', '🐸', '🎨', '🍂', '💎', '🌈'],

@@ -268,4 +268,16 @@ const sunset: Theme = {
   motes: '255,230,200',
 };
 
-export const THEMES: Record<string, Theme> = { meadow, morning, night, rain, windy, pond, grey, autumn, cave, sunset };
+// Evening: the sun is gone, the sky is purple and peach, first stars.
+const dusk: Theme = {
+  ...night,
+  id: 'dusk',
+  sky: [[0, '#2a2a78'], [0.4, '#5a4a9e'], [0.66, '#b07ab8'], [0.84, '#f0a8a8'], [1, '#ffc8a0']],
+  clouds: 0.6, cloudShade: 'rgba(150,110,170,0.9)',
+  range1: ['#5a4a8e', '#8a6aa8'], range2: ['#4a3e80', '#76609c'],
+  haze: ['140,110,180', '230,160,170'], hazeK: 0.9,
+  farHill: ['#43407e', '#5a5290'], midHill: ['#2e3a66', '#3a4674'],
+  tint: '#a29ad8', moteCount: 40,
+};
+
+export const THEMES: Record<string, Theme> = { meadow, morning, night, rain, windy, pond, grey, autumn, cave, sunset, dusk };

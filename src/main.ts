@@ -17,6 +17,7 @@ import { Save, type Profile } from './save';
 import { show, renderWho, askName, confirm, renderMap, renderChapters, showEnd, type ScreenId } from './ui/screens';
 import { openWardrobe, tickWardrobe } from './ui/wardrobe';
 import { setLook } from './game/look';
+import { Modal } from './ui/modal';
 
 // Pollen Fairy — screens, game loop, level flow.
 
@@ -129,10 +130,11 @@ $('home').addEventListener('click', () => { pause(); $('home').blur(); });
 $('pausePlay').addEventListener('click', resume);
 $('pauseMap').addEventListener('click', goMap);
 $('pauseReplay').addEventListener('click', () => startLevel(world.def.id));
+$('againGo').addEventListener('click', () => startLevel(world.def.id));
 
 // Pause keeps the level exactly as it is; Play goes on from the same spot.
 function pause(): void {
-  if (screen !== 'level' || world.mode !== 'play') return;
+  if (screen !== 'level' || world.mode !== 'play' || Modal.open) return;
   releaseAll();
   setScreen('pause');
 }
@@ -154,6 +156,7 @@ bindInput(code => {
   if (screen === 'title' && (code === 'Enter' || code === 'Space')) { Sound.init(); goWho(); }
   if (code === 'Escape' || code === 'KeyP') { if (screen === 'level') pause(); else if (screen === 'pause') resume(); }
   else if (screen === 'pause' && (code === 'Enter' || code === 'Space')) resume();
+  else if (screen === 'again' && code === 'Enter') startLevel(world.def.id);
   if (!DEBUG || !profile) return;
   // debug keys: N = finish this level now, 1…9 / 0 = jump to level 1…10 of this chapter, C = next chapter
   if (code === 'KeyN' && screen === 'level' && world.mode === 'play') debugWin();
@@ -184,6 +187,8 @@ function update(dt: number): void {
   updatePlayer(w, dt);
   if (w.mode === 'idle') w.player.wingT += dt * 2.5;
   for (const e of w.entities) e.update(w, dt);
+  // a timer ran out: no fuss, just offer to start again
+  if (w.failed && screen === 'level') { releaseAll(); setScreen('again'); return; }
 
   const p = w.player;
   p.sqV += (-p.sq * 260 - p.sqV * 16) * dt;
@@ -219,7 +224,7 @@ let last = performance.now();
 function frame(now: number): void {
   const dt = clamp((now - last) / 1000, 0, 0.033);
   last = now;
-  if (screen !== 'pause') update(dt);
+  if (screen !== 'pause' && screen !== 'again' && !Modal.open) update(dt);
   renderWorld(world);
   requestAnimationFrame(frame);
 }

@@ -149,12 +149,14 @@ export class SkyCastle implements Entity {
 export class Lanterns implements Entity {
   z = -1;
   pts: { x: number; c: string; ph: number }[] = [];
+  lit = true;
+  litT = 1;
   constructor(public x0: number, public x1: number, public y: number) {
     const r = mulberry32(x0);
     for (let x = x0 + 30; x < x1; x += 60) this.pts.push({ x, c: RAINBOW[Math.floor(r() * 6)], ph: r() * TAU });
   }
   sag(x: number): number { const u = (x - this.x0) / (this.x1 - this.x0); return this.y + Math.sin(u * Math.PI) * 50; }
-  update(): void {}
+  update(_w: World, dt: number): void { this.litT = Math.max(0, Math.min(1, this.litT + (this.lit ? dt : -dt) * 1.5)); }
   draw(w: World): void {
     if (!visible(this.x0 - 50, this.x1 + 50)) return;
     for (const px of [this.x0, this.x1]) {
@@ -168,13 +170,13 @@ export class Lanterns implements Entity {
     for (const l of this.pts) {
       const y = this.sag(l.x) + 4, sw = Math.sin(V.time * 1.5 + l.ph) * 0.12;
       ctx.save(); ctx.translate(l.x, y); ctx.rotate(sw);
-      ctx.fillStyle = l.c; ctx.beginPath(); ctx.ellipse(0, 16, 12, 15, 0, 0, TAU); ctx.fill();
+      ctx.fillStyle = this.litT > 0.5 ? l.c : '#6a6488'; ctx.beginPath(); ctx.ellipse(0, 16, 12, 15, 0, 0, TAU); ctx.fill();
       ctx.fillStyle = 'rgba(255,255,255,0.4)'; ctx.beginPath(); ctx.ellipse(-4, 12, 3, 7, 0, 0, TAU); ctx.fill();
       ctx.fillStyle = '#7a4a3a'; ctx.fillRect(-6, 0, 12, 4); ctx.fillRect(-5, 30, 10, 3);
       ctx.restore();
     }
   }
   drawLight(): void {
-    for (const l of this.pts) if (visible(l.x - 60, l.x + 60)) glow(l.x, this.sag(l.x) + 20, 50, 'rgba(255,220,160,A)', 0.35);
+    for (const l of this.pts) if (visible(l.x - 60, l.x + 60)) glow(l.x, this.sag(l.x) + 20, 50 + 40 * this.litT, 'rgba(255,220,160,A)', 0.45 * this.litT);
   }
 }

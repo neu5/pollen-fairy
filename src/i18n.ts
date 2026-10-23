@@ -13,7 +13,7 @@ const en = {
   'a.sound': 'Sound on or off', 'a.play': 'Play', 'a.home': 'Back to map', 'a.back': 'Back', 'a.ok': 'OK',
   'a.yourName': 'Fairy name', 'a.random': 'Surprise me', 'a.done': 'Done', 'a.changePlayer': 'Change player',
   'a.dress': 'Dress up', 'a.map': 'Map', 'a.replay': 'Play again', 'a.next': 'Next level',
-  'a.left': 'Walk left', 'a.right': 'Walk right', 'a.fly': 'Fly', 'a.lang': 'Language', 'paused': 'Paused', 'a.pause': 'Pause', 'a.resume': 'Keep playing', 'a.restart': 'Start again',
+  'a.left': 'Walk left', 'a.right': 'Walk right', 'a.fly': 'Fly', 'a.lang': 'Language', 'again': 'Oh! Again?', 'a.close': 'Close', 'a.minBack': 'Long hand back', 'a.minFwd': 'Long hand forward', 'a.hourBack': 'Short hand back', 'a.hourFwd': 'Short hand forward', 'paused': 'Paused', 'a.pause': 'Pause', 'a.resume': 'Keep playing', 'a.restart': 'Start again',
   'a.playAs': 'Play as {name}', 'a.remove': 'Remove {name}', 'a.dressKid': 'Dress up {name}',
   'a.newPlayer': 'New player', 'a.locked': '(locked)',
   'tab.hair': 'Hair', 'tab.dress': 'Dress', 'tab.shoes': 'Shoes', 'tab.wings': 'Wings',
@@ -36,6 +36,23 @@ const en = {
   'l4-9': 'Baby Turtles', 'l4-10': 'Coral Party', 'l5-1': 'Goat Path', 'l5-2': 'Cold Fox', 'l5-3': 'Balance Bridge',
   'l5-4': 'Cloud Shapes', 'l5-5': 'Snowflake Race', 'l5-6': 'Moon Phases', 'l5-7': 'Balloon Ride',
   'l5-8': 'Mountain Clock', 'l5-9': 'Star Count', 'l5-10': 'Festival of Friends',
+  'w2-1': 'Owl can see again!', 'w2-2': 'Sleep well, Badger!', 'w2-3': "It's 8 o'clock. The lamps are on!",
+  'w2-4': 'Hedgehog has a yummy supper!', 'w2-5': 'Mouse found the way home!', 'w2-6': 'Look, an owl made of stars!',
+  'w2-7': 'Owl school can begin!', 'w2-8': 'All the fox cubs are home!',
+  'w2-9': 'The moths are dancing in the light!', 'w2-10': 'Happy Moon Festival!',
+  'w3-1': 'The little seed became a flower!', 'w3-2': 'All the bees are home!',
+  'w3-3': 'The butterflies love their new colours!', 'w3-4': "Rabbit's garden is ready!",
+  'w3-5': 'The roots have water now!', 'w3-6': 'The Season Tree is happy again!',
+  'w3-7': 'The field had a good drink!', 'w3-8': 'All the apples are sorted!',
+  'w3-9': 'The birds are warm and full!', 'w3-10': 'Spring is here!', 'w4-1': 'The ducklings are with Mama!',
+  'w4-2': 'The river is clean again!', 'w4-3': 'The dam is finished!', 'w4-4': 'The raft floats!',
+  'w4-5': 'Round and round goes the water!', 'w4-6': 'The fish reached the reef!',
+  'w4-7': 'The lighthouse shines for the boats!', 'w4-8': 'Every crab has a cosy shell!',
+  'w4-9': 'The baby turtles reached the sea!', 'w4-10': 'What a sparkly coral party!', 'w5-1': 'Goat is at the top!',
+  'w5-2': 'Fox is nice and warm!', 'w5-3': 'The bridge is level!', 'w5-4': 'Beautiful cloud shapes!',
+  'w5-5': 'Ten snowflakes caught!', 'w5-6': 'The moon is in the right order!',
+  'w5-7': 'The balloon floats just right!', 'w5-8': 'You are a clock expert!', 'w5-9': 'Great counting!',
+  'w5-10': 'Thank you for helping everyone!',
 };
 
 export type Key = keyof typeof en;
@@ -50,7 +67,7 @@ const pl: Record<Key, string> = {
   'a.sound': 'Dźwięk włącz lub wyłącz', 'a.play': 'Graj', 'a.home': 'Wróć do mapy', 'a.back': 'Wstecz', 'a.ok': 'OK',
   'a.yourName': 'Imię wróżki', 'a.random': 'Niespodzianka', 'a.done': 'Gotowe', 'a.changePlayer': 'Zmień gracza',
   'a.dress': 'Przebierz', 'a.map': 'Mapa', 'a.replay': 'Zagraj jeszcze raz', 'a.next': 'Następny poziom',
-  'a.left': 'Idź w lewo', 'a.right': 'Idź w prawo', 'a.fly': 'Leć', 'a.lang': 'Język', 'paused': 'Pauza', 'a.pause': 'Pauza', 'a.resume': 'Graj dalej', 'a.restart': 'Zacznij od nowa',
+  'a.left': 'Idź w lewo', 'a.right': 'Idź w prawo', 'a.fly': 'Leć', 'a.lang': 'Język', 'again': 'Ojej! Jeszcze raz?', 'a.close': 'Zamknij', 'a.minBack': 'Duża wskazówka do tyłu', 'a.minFwd': 'Duża wskazówka do przodu', 'a.hourBack': 'Mała wskazówka do tyłu', 'a.hourFwd': 'Mała wskazówka do przodu', 'paused': 'Pauza', 'a.pause': 'Pauza', 'a.resume': 'Graj dalej', 'a.restart': 'Zacznij od nowa',
   'a.playAs': 'Graj jako {name}', 'a.remove': 'Usuń {name}', 'a.dressKid': 'Przebierz {name}',
   'a.newPlayer': 'Nowy gracz', 'a.locked': '(zamknięte)',
   'tab.hair': 'Włosy', 'tab.dress': 'Sukienka', 'tab.shoes': 'Buty', 'tab.wings': 'Skrzydła',
@@ -73,6 +90,21 @@ const pl: Record<Key, string> = {
   'l4-9': 'Małe żółwie', 'l4-10': 'Koralowa zabawa', 'l5-1': 'Ścieżka Kozy', 'l5-2': 'Zmarznięty Lis',
   'l5-3': 'Mostek z wagą', 'l5-4': 'Chmurkowe kształty', 'l5-5': 'Wyścig śnieżynek', 'l5-6': 'Fazy Księżyca',
   'l5-7': 'Lot balonem', 'l5-8': 'Zegar w górach', 'l5-9': 'Liczenie gwiazd', 'l5-10': 'Święto Przyjaciół',
+  'w2-1': 'Sowa znowu widzi!', 'w2-2': 'Śpij dobrze, Borsuku!', 'w2-3': 'Jest ósma. Lampy świecą!',
+  'w2-4': 'Jeż ma pyszną kolację!', 'w2-5': 'Myszka znalazła drogę do domu!', 'w2-6': 'Patrz, sowa z gwiazd!',
+  'w2-7': 'Szkoła Sowy może się zacząć!', 'w2-8': 'Wszystkie liski są w domu!', 'w2-9': 'Ćmy tańczą w świetle!',
+  'w2-10': 'Wesołego Święta Księżyca!', 'w3-1': 'Małe nasionko stało się kwiatkiem!',
+  'w3-2': 'Wszystkie pszczoły są w domu!', 'w3-3': 'Motyle kochają nowe kolory!', 'w3-4': 'Ogródek Królika gotowy!',
+  'w3-5': 'Korzenie mają już wodę!', 'w3-6': 'Drzewo pór roku znów jest szczęśliwe!', 'w3-7': 'Pole się napiło!',
+  'w3-8': 'Wszystkie jabłka posortowane!', 'w3-9': 'Ptaszki są najedzone i im ciepło!', 'w3-10': 'Wiosna przyszła!',
+  'w4-1': 'Kaczuszki są z mamą!', 'w4-2': 'Rzeka znowu jest czysta!', 'w4-3': 'Tama gotowa!',
+  'w4-4': 'Tratwa pływa!', 'w4-5': 'Woda krąży w kółko!', 'w4-6': 'Rybki dopłynęły do rafy!',
+  'w4-7': 'Latarnia świeci dla łódek!', 'w4-8': 'Każdy krab ma przytulną muszlę!',
+  'w4-9': 'Małe żółwie dotarły do morza!', 'w4-10': 'Ale błyszcząca koralowa zabawa!',
+  'w5-1': 'Koza jest na szczycie!', 'w5-2': 'Lisowi jest ciepło!', 'w5-3': 'Mostek jest równy!',
+  'w5-4': 'Piękne chmurkowe kształty!', 'w5-5': 'Złapano dziesięć śnieżynek!',
+  'w5-6': 'Księżyc jest w dobrej kolejności!', 'w5-7': 'Balon leci w sam raz!', 'w5-8': 'Jesteś mistrzem zegara!',
+  'w5-9': 'Świetnie liczysz!', 'w5-10': 'Dziękujemy, że wszystkim pomagasz!',
 };
 
 const DICT: Record<Lang, Record<Key, string>> = { en, pl };
@@ -93,7 +125,7 @@ const listeners: (() => void)[] = [];
 export const getLang = (): Lang => lang;
 
 export function t(key: Key, vars: Record<string, string | number> = {}): string {
-  return DICT[lang][key].replace(/\{(\w+)\}/g, (_, k) => String(vars[k] ?? ''));
+  return (DICT[lang][key] ?? DICT.en[key] ?? key).replace(/\{(\w+)\}/g, (_, k) => String(vars[k] ?? ''));
 }
 
 export function setLang(l: Lang): void {

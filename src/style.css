@@ -421,3 +421,28 @@ html, body, #game, .tbtn { touch-action: none; }
 #map .map-top { padding-right: 90px; }
 .map-path path { stroke: color-mix(in srgb, var(--chapter, #fff) 35%, #fff); }
 @media (max-aspect-ratio: 1/1) { .chapter { width: 140px; } .chapter .icon { font-size: 46px; } .map-title { font-size: 17px; } }
+
+/* ---------- clock puzzle ---------- */
+#clock { background: rgba(60, 40, 110, 0.35); z-index: 8; }
+.clock-card { position: relative; gap: 12px; padding: 22px 30px 26px; max-width: 560px; }
+.clock-card .kid-del { top: 10px; right: 10px; left: auto; }
+.clock-goal { display: flex; align-items: center; gap: 12px; background: #fff4cc; padding: 6px 18px 6px 8px; border-radius: 999px; box-shadow: 0 4px 0 #f0b850; }
+.clock-mini { width: 54px; height: 54px; }
+.clock-digits { font-size: 44px; font-weight: 700; color: #5b3a8c; letter-spacing: 2px; }
+.clock-face { width: min(300px, 62vw, 42vh); height: min(300px, 62vw, 42vh); filter: drop-shadow(0 8px 14px rgba(90, 60, 140, 0.25)); }
+.clock-face.ok { animation: pop 0.6s cubic-bezier(0.2, 1.8, 0.4, 1); filter: drop-shadow(0 0 24px #ffe27a); }
+.clock-face.no { animation: shake 0.4s; }
+.clock-buttons { display: flex; gap: 22px; flex-wrap: wrap; justify-content: center; }
+.clock-pair { display: flex; align-items: center; gap: 8px; }
+.clock-pair .pill { font-size: 30px; min-width: 70px; height: 64px; }
+.clock-pair.short .pill { min-width: 58px; height: 54px; font-size: 24px; }
+.hand-icon { display: block; width: 10px; border-radius: 6px; }
+.hand-icon.long { height: 46px; background: #ff6fa8; }
+.hand-icon.short { height: 28px; width: 13px; background: #5b3a8c; }
+@keyframes shake { 20%, 60% { translate: -10px 0; } 40%, 80% { translate: 10px 0; } }
+
+/* ---------- timer + try again ---------- */
+#again { background: rgba(60, 40, 110, 0.25); z-index: 8; }
+.again-icon { font-size: 64px; }
+.clock-pair .pill svg { width: 34px; height: 34px; }
+.clock-pair.short .pill svg { width: 26px; height: 26px; }

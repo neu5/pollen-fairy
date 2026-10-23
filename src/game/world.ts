@@ -104,6 +104,7 @@ export function createWorld(def: LevelDef): World {
     finaleT: 0, finaleSpot: { x: 0, y: 0 }, rainbowA: 0,
     hints: { walked: !def.hints, flew: !def.hints, walkA: 0, flyA: 0 },
     time: 0,
+    failed: false,
   };
   def.setup?.(w);
   return w;

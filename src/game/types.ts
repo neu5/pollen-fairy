@@ -99,4 +99,5 @@ export interface World {
   rainbowA: number;
   hints: { walked: boolean; flew: boolean; walkA: number; flyA: number };
   time: number;              // seconds since level start
+  failed: boolean;           // a timer ran out: the level starts again
 }

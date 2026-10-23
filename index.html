@@ -140,6 +140,42 @@
     </div>
   </div>
 
+  <div id="clock" class="overlay">
+    <div class="card clock-card">
+      <button id="clockClose" class="kid-del" data-i18n-aria="a.close" aria-label="Close">✕</button>
+      <div class="clock-goal">
+        <svg id="clockGoalFace" class="clock-mini" aria-hidden="true"></svg>
+        <span id="clockGoal" class="clock-digits">8:00</span>
+      </div>
+      <svg id="clockFace" class="clock-face" aria-hidden="true"></svg>
+      <div class="clock-buttons">
+        <div class="clock-pair long">
+          <button id="clockMinBack" class="pill" data-i18n-aria="a.minBack" aria-label="Long hand back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5V2L7 6l5 4V7a5 5 0 1 1-5 5H5a7 7 0 1 0 7-7z"/></svg></button>
+          <span class="hand-icon long"></span>
+          <button id="clockMinFwd" class="pill" data-i18n-aria="a.minFwd" aria-label="Long hand forward"><svg viewBox="0 0 24 24" aria-hidden="true" style="transform:scaleX(-1)"><path d="M12 5V2L7 6l5 4V7a5 5 0 1 1-5 5H5a7 7 0 1 0 7-7z"/></svg></button>
+        </div>
+        <div class="clock-pair short">
+          <button id="clockHourBack" class="pill" data-i18n-aria="a.hourBack" aria-label="Short hand back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5V2L7 6l5 4V7a5 5 0 1 1-5 5H5a7 7 0 1 0 7-7z"/></svg></button>
+          <span class="hand-icon short"></span>
+          <button id="clockHourFwd" class="pill" data-i18n-aria="a.hourFwd" aria-label="Short hand forward"><svg viewBox="0 0 24 24" aria-hidden="true" style="transform:scaleX(-1)"><path d="M12 5V2L7 6l5 4V7a5 5 0 1 1-5 5H5a7 7 0 1 0 7-7z"/></svg></button>
+        </div>
+      </div>
+      <button id="clockOk" class="big small" data-i18n-aria="a.ok" aria-label="OK">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 16.2 5.3 12l-1.8 1.8 6 6L21 8.3l-1.8-1.8z"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div id="again" class="overlay">
+    <div class="card">
+      <div class="again-icon">⏳</div>
+      <h2 data-i18n="again">Oh! Again?</h2>
+      <button id="againGo" class="big small" data-i18n-aria="a.restart" aria-label="Start again">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5V2L7 6l5 4V7a5 5 0 1 1-5 5H5a7 7 0 1 0 7-7z"/></svg>
+      </button>
+    </div>
+  </div>
+
   <div id="end" class="overlay">
     <div class="card">
       <h2 id="endTitle">Hooray!</h2>
