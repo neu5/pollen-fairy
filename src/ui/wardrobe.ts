@@ -5,6 +5,7 @@ import {
 } from '../game/look';
 import { Sound } from '../sound';
 import { show } from './screens';
+import { t } from '../i18n';
 
 // Dress-up screen: pick hair, dress, shoes and wings. Pictures only, no reading needed.
 
@@ -31,9 +32,7 @@ export function paintFairy(c: HTMLCanvasElement, look: Look, t: number, focus: F
   setCtx(mainCtx);
 }
 
-const TABS: { id: Tab; label: string }[] = [
-  { id: 'hair', label: 'Hair' }, { id: 'dress', label: 'Dress' }, { id: 'shoes', label: 'Shoes' }, { id: 'wings', label: 'Wings' },
-];
+const TABS: Tab[] = ['hair', 'dress', 'shoes', 'wings'];
 
 let look: Look;
 let tab: Tab = 'hair';
@@ -85,17 +84,17 @@ function build(): void {
   switch (tab) {
     case 'hair':
       styles(HAIRS, look.hair, v => ({ ...look, hair: v }), 'head', v => { look.hair = v; });
-      swatches('wardColors', HAIR_COLORS, look.hairColor, c => { look.hairColor = c; }, 'Hair colour');
-      swatches('wardSkins', SKINS, look.skin, c => { look.skin = c; }, 'Skin');
+      swatches('wardColors', HAIR_COLORS, look.hairColor, c => { look.hairColor = c; }, t('c.hair'));
+      swatches('wardSkins', SKINS, look.skin, c => { look.skin = c; }, t('c.skin'));
       break;
     case 'dress':
       styles(DRESSES, look.dress, v => ({ ...look, dress: v }), 'full', v => { look.dress = v; });
-      swatches('wardColors', DRESS_COLORS, look.dressColor, c => { look.dressColor = c; }, 'Dress colour');
+      swatches('wardColors', DRESS_COLORS, look.dressColor, c => { look.dressColor = c; }, t('c.dress'));
       break;
     case 'shoes':
       // a long gown would hide the shoes in the little pictures
       styles(SHOES, look.shoes, v => ({ ...look, shoes: v, dress: look.dress === 'gown' ? 'tutu' : look.dress }), 'feet', v => { look.shoes = v; });
-      swatches('wardColors', SHOE_COLORS, look.shoeColor, c => { look.shoeColor = c; }, 'Shoe colour');
+      swatches('wardColors', SHOE_COLORS, look.shoeColor, c => { look.shoeColor = c; }, t('c.shoes'));
       break;
     case 'wings':
       styles(WINGS, look.wings, v => ({ ...look, wings: v }), 'full', v => { look.wings = v; });
@@ -110,13 +109,14 @@ export function openWardrobe(name: string, start: Look, done: (l: Look) => void)
   $('wardName').textContent = name;
   const tabs = $('wardTabs');
   if (!tabs.childElementCount) {
-    for (const t of TABS) {
+    for (const tb of TABS) {
       const b = document.createElement('button');
-      b.dataset.tab = t.id;
-      b.setAttribute('aria-label', t.label);
+      b.dataset.tab = tb;
+      b.dataset.i18nAria = `tab.${tb}`;
+      b.setAttribute('aria-label', t(`tab.${tb}`));
       const c = document.createElement('canvas');
       b.append(c);
-      b.onclick = () => { tab = t.id; Sound.tick(); build(); };
+      b.onclick = () => { tab = tb; Sound.tick(); build(); };
       tabs.append(b);
     }
   }

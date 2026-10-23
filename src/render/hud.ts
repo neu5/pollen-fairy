@@ -2,6 +2,7 @@ import { ctx, V, IS_TOUCH, screenSpace } from '../engine/view';
 import { glow } from '../engine/fx';
 import { TAU, clamp, damp, ease, circle, rr } from '../util';
 import type { World } from '../game/types';
+import { t } from '../i18n';
 
 const JAR_X = 58, JAR_Y = 62;
 
@@ -113,5 +114,5 @@ function drawHintBubble(w: World, a: number, keys: { w: number; label: string }[
 
 export function drawHints(w: World): void {
   drawHintBubble(w, w.hints.walkA, [{ w: 40, label: 'left' }, { w: 40, label: 'right' }]);
-  drawHintBubble(w, w.hints.flyA, IS_TOUCH ? [{ w: 52, label: 'wing' }] : [{ w: 92, label: 'SPACE' }, { w: 40, label: 'wing' }]);
+  drawHintBubble(w, w.hints.flyA, IS_TOUCH ? [{ w: 52, label: 'wing' }] : [{ w: 92, label: t('key.space') }, { w: 40, label: 'wing' }]);
 }

@@ -1,6 +1,7 @@
 import { LEVELS } from '../levels';
 import { Save, type Profile } from '../save';
 import { paintFairy } from './wardrobe';
+import { t, type Key } from '../i18n';
 
 // DOM screens: title, who's playing, new kid, confirm, level map, end card.
 
@@ -38,23 +39,23 @@ export function renderWho(h: WhoHandlers): void {
   for (const p of Save.profiles()) {
     const card = el('div', 'kid');
     const btn = el('button', 'kid-btn');
-    btn.setAttribute('aria-label', `Play as ${p.name}`);
+    btn.setAttribute('aria-label', t('a.playAs', { name: p.name }));
     btn.append(avatar(p), el('span', 'kid-name', p.name));
     const stars = Object.values(p.levels).reduce((s, l) => s + l.stars, 0);
     btn.append(el('span', 'kid-stars', `★ ${stars}`));
     btn.onclick = () => h.pick(p);
     const del = el('button', 'kid-del', '✕');
-    del.setAttribute('aria-label', `Remove ${p.name}`);
+    del.setAttribute('aria-label', t('a.remove', { name: p.name }));
     del.onclick = e => { e.stopPropagation(); h.remove(p); };
     const dress = el('button', 'kid-dress', '👗');
-    dress.setAttribute('aria-label', `Dress up ${p.name}`);
+    dress.setAttribute('aria-label', t('a.dressKid', { name: p.name }));
     dress.onclick = e => { e.stopPropagation(); h.dress(p); };
     card.append(btn, del, dress);
     box.append(card);
   }
   const add = el('button', 'kid-btn add');
-  add.setAttribute('aria-label', 'New player');
-  add.append(el('div', 'avatar plus', '+'), el('span', 'kid-name', 'New'));
+  add.setAttribute('aria-label', t('a.newPlayer'));
+  add.append(el('div', 'avatar plus', '+'), el('span', 'kid-name', t('new')));
   add.onclick = h.add;
   const card = el('div', 'kid'); card.append(add);
   box.append(card);
@@ -123,7 +124,7 @@ export function renderMap(p: Profile, play: (id: number) => void, back: () => vo
     Object.assign(b.style, at(i));
     b.classList.add(res?.done ? 'done' : open ? 'open' : slot.def ? 'locked' : 'soon');
     if (slot.id === current && !res?.done) b.classList.add('next');
-    b.setAttribute('aria-label', `${slot.id}. ${slot.name}${open ? '' : ' (locked)'}`);
+    b.setAttribute('aria-label', `${slot.id}. ${t(`l${slot.id}` as Key)}${open ? '' : ' ' + t('a.locked')}`);
     b.append(el('span', 'num', String(slot.id)), el('span', 'icon', open || res?.done ? slot.icon : '🔒'));
     if (res?.done) {
       const s = el('span', 'stars');
@@ -143,7 +144,7 @@ export function renderMap(p: Profile, play: (id: number) => void, back: () => vo
 export interface EndHandlers { map(): void; replay(): void; next: (() => void) | null }
 
 export function showEnd(name: string, text: string, stars: number, count: string, h: EndHandlers): void {
-  $('endTitle').textContent = `Hooray, ${name}!`;
+  $('endTitle').textContent = t('hooray', { name });
   $('endSub').textContent = text;
   $('endCount').textContent = count;
   const s = $('endStars');

@@ -55,7 +55,8 @@ h1 {
   text-shadow: 0 4px 0 #f58ac0, 0 9px 0 #c86bd8, 0 16px 28px rgba(120, 60, 160, 0.35);
   animation: float 4.5s ease-in-out infinite;
 }
-h1 span {
+h1 span { display: block; }
+h1 span.b {
   display: block;
   color: #fff6c2;
   text-shadow: 0 4px 0 #f5a54a, 0 9px 0 #e07a8a, 0 16px 28px rgba(120, 60, 160, 0.35);
@@ -376,3 +377,16 @@ kbd {
   .ward-choice { width: 68px; height: 82px; }
   .ward-tabs button { width: 58px; height: 58px; }
 }
+
+/* ---------- language picker ---------- */
+.langs {
+  position: fixed; top: 18px; left: 18px; z-index: 6; display: none; gap: 8px; padding: 7px;
+  background: rgba(255, 255, 255, 0.75); border-radius: 999px; box-shadow: 0 5px 16px rgba(90, 60, 140, 0.2);
+}
+body[data-screen="title"] .langs, body[data-screen="who"] .langs, body[data-screen="newkid"] .langs { display: flex; }
+.langs button {
+  width: 52px; height: 40px; padding: 5px; border: 0; border-radius: 14px; background: transparent;
+  opacity: 0.55; transition: opacity 0.15s, transform 0.15s;
+}
+.langs button svg { width: 100%; height: 100%; display: block; border-radius: 5px; box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.12); }
+.langs button.on { opacity: 1; background: #fff4cc; box-shadow: 0 0 0 3px #ffcf3a inset; transform: scale(1.05); }
