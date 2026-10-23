@@ -27,6 +27,7 @@ export class ClockTower implements Entity {
   z = -1;
   shown: ClockTime;
   solved = false;
+  locked = false;            // true until the level says the clock may be used
   wasNear = false;
   bubbleA = 0;
   constructor(public x: number, public target: ClockTime, start: ClockTime, public onSolved: (w: World) => void, public roof = '#ec9fc6') {
@@ -36,7 +37,7 @@ export class ClockTower implements Entity {
 
   update(w: World, dt: number): void {
     const f = this.face(w);
-    const near = w.mode === 'play' && !this.solved && playerNear(w, f.x, f.y, 90);
+    const near = w.mode === 'play' && !this.solved && !this.locked && playerNear(w, f.x, f.y, 90);
     if (near && !this.wasNear) {
       openClock(this.target, this.shown, () => {
         this.solved = true; this.shown = this.target;
@@ -47,7 +48,7 @@ export class ClockTower implements Entity {
       w.player.x -= 60;
     }
     this.wasNear = near;
-    const far = w.mode === 'play' && !this.solved && Math.abs(w.player.x - this.x) < 520;
+    const far = w.mode === 'play' && !this.solved && !this.locked && Math.abs(w.player.x - this.x) < 520;
     this.bubbleA += ((far ? 1 : 0) - this.bubbleA) * Math.min(1, dt * 4);
   }
 
@@ -64,7 +65,7 @@ export class ClockTower implements Entity {
     ctx.beginPath(); ctx.moveTo(this.x - 76, gy - 316); ctx.lineTo(this.x, gy - 410); ctx.lineTo(this.x + 76, gy - 316); ctx.closePath(); ctx.fill();
     ctx.fillStyle = '#8a5236';
     ctx.beginPath(); ctx.moveTo(this.x - 24, gy + 2); ctx.lineTo(this.x - 24, gy - 44); ctx.arc(this.x, gy - 44, 24, Math.PI, 0); ctx.lineTo(this.x + 24, gy + 2); ctx.fill();
-    if (!this.solved) touchGlow(f.x, f.y, 80);
+    if (!this.solved && !this.locked) touchGlow(f.x, f.y, 80);
     drawClockFace(f.x, f.y, f.r, this.shown, this.solved);
   }
 

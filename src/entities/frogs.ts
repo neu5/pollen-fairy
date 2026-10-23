@@ -83,6 +83,9 @@ export class Frog implements Entity {
 }
 
 // Plays a short song, then waits for the fairy to touch the frogs in the same order.
+// Anything that can take part in the "listen and repeat" game.
+export interface Singer { x: number; y: number; noT: number; jumpT: number; onTouch: (() => void) | null; sing(): void }
+
 export class FrogChoir implements Entity {
   z = 0;
   rounds = [[0, 2], [1, 0, 2], [2, 1, 0]];
@@ -93,7 +96,8 @@ export class FrogChoir implements Entity {
   got = 0;
   bubbleA = 0;
 
-  constructor(public frogs: Frog[], public startX: number, public winSpot: { x: number; y: number }) {
+  constructor(public frogs: Singer[], public startX: number, public winSpot: { x: number; y: number }, rounds?: number[][]) {
+    if (rounds) this.rounds = rounds;
     frogs.forEach((f, i) => { f.onTouch = () => this.touched(i); });
   }
 
