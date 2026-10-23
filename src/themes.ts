@@ -2,7 +2,7 @@ import type { TreePal, BushPal } from './art';
 
 // A theme is the whole look of a level: sky, background layers, ground and light.
 
-export type Weather = 'none' | 'rain' | 'leaves' | 'fireflies' | 'snow' | 'petals';
+export type Weather = 'none' | 'rain' | 'leaves' | 'fireflies' | 'snow' | 'petals' | 'bubbles';
 
 export interface Theme {
   id: string;
@@ -37,7 +37,9 @@ export interface Theme {
   vignette: string;                // 'r,g,b'
   butterflies: boolean;
   tint: string | null;             // multiply over the play layer (night, rain)
-  rocks?: boolean;                 // cave: stalagmites instead of trees, stalactites on top
+  rocks?: boolean;                 // rock spikes / coral instead of trees
+  ceiling?: boolean;               // cave: rock spikes hanging from the top
+  seaweed?: boolean;               // sea: seaweed instead of trees
   tuft?: [string, string];         // little grass tufts (dark, light); default green
   nearTrees?: boolean;             // draw the big near trees (default yes)
   weather: Weather;
@@ -243,7 +245,7 @@ const cave: Theme = {
     { trunk: '#1e1840', dark: '#4a2a6a', mid: '#5e3888', light: '#8a5ab8' },
     { trunk: '#1e1840', dark: '#2a3a6a', mid: '#364c88', light: '#5070b0' },
   ],
-  rocks: true, nearTrees: false,
+  rocks: true, ceiling: true, nearTrees: false,
   backHill: ['#2a1e4a', '#1e1638'],
   bushBack: { dark: '#2a2050', mid: '#34285e', light: '#46387a', flower: ['#7ae0ff', '#c3aaff'] },
   bushPlay: { dark: '#1e3a4a', mid: '#2a4c5c', light: '#3a6672', flower: ['#7ae0ff', '#ff8fd0', '#c3aaff'] },
@@ -340,4 +342,56 @@ const winter: Theme = {
   butterflies: false, weather: 'snow',
 };
 
-export const THEMES: Record<string, Theme> = { meadow, morning, night, rain, windy, pond, grey, autumn, cave, sunset, dusk, spring, summer, winter };
+// Sunny beach: sea far away, sand under your feet.
+const beach: Theme = {
+  ...meadow,
+  id: 'beach',
+  sky: [[0, '#3aa4ec'], [0.45, '#80d0fa'], [0.72, '#c8f0fc'], [0.88, '#fff4d8'], [1, '#ffe8c0']],
+  range1: ['#6ec4e8', '#a8e2f4'], range2: ['#4aaee0', '#8ad8f2'], castle: false,
+  farHill: ['#f0dca8', '#f8ecc8'],
+  far: [
+    { trunk: '#b89a78', dark: '#8ac8a0', mid: '#a8dcb4', light: '#cceccc' },
+    { trunk: '#b89a78', dark: '#9ad0a8', mid: '#b4e2bc', light: '#d4f0d4' },
+  ],
+  midHill: ['#ecd298', '#f6e4b8'],
+  backHill: ['#e8c888', '#d8b070'],
+  bushBack: { dark: '#7ab88a', mid: '#94cc9c', light: '#bce4bc', flower: ['#ffffff', '#ffd166'] },
+  bushPlay: { dark: '#4a9a68', mid: '#5cb478', light: '#88d494', flower: ['#ff8fc7', '#ffffff'] },
+  dirt: ['#f0d498', '#e0bc78', '#c8a060'],
+  grass: ['#e8cc88', '#f2dca0', '#fff0c8'], tuft: ['#7ab85a', '#9ad070'],
+  butterflies: false,
+};
+
+// Under the sea: blue light from above, bubbles, sand floor.
+const sea: Theme = {
+  ...meadow,
+  id: 'sea',
+  sky: [[0, '#5ac8f0'], [0.35, '#2a96d0'], [0.7, '#1a6aa8'], [1, '#184a88']],
+  sun: 'none', stars: false, rays: 0.9, clouds: 0,
+  range1: ['#1e5a90', '#286aa0'], range2: ['#1a4e84', '#24609a'], castle: false,
+  haze: ['90,170,220', '40,110,170'], hazeK: 1,
+  farHill: ['#2a6a9a', '#2a5a88'],
+  far: [
+    { trunk: '#2a5a7a', dark: '#2a8a8a', mid: '#3aa0a0', light: '#5ac0b8' },
+    { trunk: '#2a5a7a', dark: '#c46a9a', mid: '#dc88b4', light: '#f2acd0' },
+  ],
+  midHill: ['#e0c898', '#d0b080'],
+  mid: [
+    { trunk: '#2a5a6a', dark: '#2a9a7a', mid: '#3ab48a', light: '#6cd4a4' },
+    { trunk: '#2a5a6a', dark: '#e07a6a', mid: '#f29a84', light: '#ffc0a8' },
+    { trunk: '#2a5a6a', dark: '#d8a83a', mid: '#ecc050', light: '#ffe080' },
+  ],
+  seaweed: true, nearTrees: false,
+  backHill: ['#e8d0a0', '#d4b484'],
+  bushBack: { dark: '#2a8a7a', mid: '#3aa48a', light: '#6ac8a8', flower: ['#ff8fc7', '#ffd166'] },
+  bushPlay: { dark: '#2a8a6a', mid: '#3aa478', light: '#6ccc94', flower: ['#ff6b8a', '#ffd166', '#b48cff'] },
+  fern: '#2a9a6a',
+  dirt: ['#f0d8a8', '#dcc088', '#c4a46c'],
+  grass: ['#e4cc98', '#eed8a8', '#fff0cc'], tuft: ['#2a9a6a', '#4abc84'],
+  fg: '#14506a', fgLeaf: '#145a5a', hang: '#1a5a7a',
+  motes: '220,245,255', moteCount: 50, moteSize: 1.6,
+  vignette: '10,30,70',
+  butterflies: false, weather: 'bubbles',
+};
+
+export const THEMES: Record<string, Theme> = { meadow, morning, night, rain, windy, pond, grey, autumn, cave, sunset, dusk, spring, summer, winter, beach, sea };

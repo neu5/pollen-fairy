@@ -259,3 +259,16 @@ export function drawStalactites(g, w, h, col, r) {
     g.closePath(); g.fill();
   }
 }
+
+// Sea: tall wavy seaweed ribbons.
+export function drawSeaweed(g, w, h, p, r) {
+  const cols = [p.dark, p.mid, p.light];
+  for (let i = 0; i < 6; i++) {
+    const x0 = w * (0.2 + r() * 0.6), len = h * (0.45 + r() * 0.5), wd = 8 + r() * 10, ph = r() * TAU;
+    g.fillStyle = cols[i % 3];
+    g.beginPath(); g.moveTo(x0 - wd / 2, h);
+    for (let k = 0; k <= 10; k++) { const y = h - len * k / 10; g.lineTo(x0 - wd / 2 + Math.sin(k * 0.9 + ph) * 14, y); }
+    for (let k = 10; k >= 0; k--) { const y = h - len * k / 10; g.lineTo(x0 + wd / 2 + Math.sin(k * 0.9 + ph) * 14 - (k / 10) * wd * 0.4, y); }
+    g.closePath(); g.fill();
+  }
+}

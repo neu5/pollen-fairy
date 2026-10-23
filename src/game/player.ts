@@ -53,16 +53,16 @@ export function updatePlayer(w: World, dt: number): void {
   if (!p.grounded && fly) {
     if (p.energy > 0) {
       if (p.vy > -230) p.vy = Math.max(-230, p.vy - 1700 * dt);
-      p.energy = Math.max(0, p.energy - dt / 2.6);
+      if (!w.def.swim) p.energy = Math.max(0, p.energy - dt / 2.6);
     } else {
       p.vy = Math.min(65, p.vy + 600 * dt); // out of wing-power: gentle glide
     }
     p.flying = true;
   } else {
-    p.vy += 1000 * dt;
+    p.vy += (w.def.swim ? 260 : 1000) * dt;
     p.flying = false;
   }
-  if (p.vy > 380) p.vy = 380;
+  if (p.vy > (w.def.swim ? 110 : 380)) p.vy = w.def.swim ? 110 : 380;
   p.flyHeld = fly;
 
   const prevY = p.y, wasGrounded = p.grounded, prevOn = p.on, landV = p.vy;

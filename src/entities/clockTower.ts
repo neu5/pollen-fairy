@@ -1,4 +1,4 @@
-import { ctx, visible } from '../engine/view';
+import { ctx, V, visible } from '../engine/view';
 import { glow, sparkleBurst } from '../engine/fx';
 import { TAU, circle, rr } from '../util';
 import { playerNear } from '../game/world';
@@ -28,6 +28,7 @@ export class ClockTower implements Entity {
   shown: ClockTime;
   solved = false;
   locked = false;            // true until the level says the clock may be used
+  lighthouse = false;        // draw a red and white lighthouse instead of a tower
   wasNear = false;
   bubbleA = 0;
   constructor(public x: number, public target: ClockTime, start: ClockTime, public onSolved: (w: World) => void, public roof = '#ec9fc6') {
@@ -55,22 +56,44 @@ export class ClockTower implements Entity {
   draw(w: World): void {
     if (!visible(this.x - 140, this.x + 140)) return;
     const gy = w.ground(this.x), f = this.face(w);
-    // tower
-    const g = ctx.createLinearGradient(this.x - 60, 0, this.x + 60, 0);
-    g.addColorStop(0, '#c4b8e0'); g.addColorStop(1, '#ece6fa');
-    ctx.fillStyle = g; rr(ctx, this.x - 60, gy - 320, 120, 330, 10); ctx.fill();
-    ctx.fillStyle = 'rgba(80,60,130,0.15)';
-    for (let y = gy - 300; y < gy; y += 30) for (let x = this.x - 52 + ((y / 30) % 2) * 15; x < this.x + 50; x += 30) rr(ctx, x, y, 24, 22, 4), ctx.fill();
-    ctx.fillStyle = this.roof;
-    ctx.beginPath(); ctx.moveTo(this.x - 76, gy - 316); ctx.lineTo(this.x, gy - 410); ctx.lineTo(this.x + 76, gy - 316); ctx.closePath(); ctx.fill();
-    ctx.fillStyle = '#8a5236';
-    ctx.beginPath(); ctx.moveTo(this.x - 24, gy + 2); ctx.lineTo(this.x - 24, gy - 44); ctx.arc(this.x, gy - 44, 24, Math.PI, 0); ctx.lineTo(this.x + 24, gy + 2); ctx.fill();
+    if (this.lighthouse) this.drawLighthouse(gy);
+    else {
+      // tower
+      const g = ctx.createLinearGradient(this.x - 60, 0, this.x + 60, 0);
+      g.addColorStop(0, '#c4b8e0'); g.addColorStop(1, '#ece6fa');
+      ctx.fillStyle = g; rr(ctx, this.x - 60, gy - 320, 120, 330, 10); ctx.fill();
+      ctx.fillStyle = 'rgba(80,60,130,0.15)';
+      for (let y = gy - 300; y < gy; y += 30) for (let x = this.x - 52 + ((y / 30) % 2) * 15; x < this.x + 50; x += 30) rr(ctx, x, y, 24, 22, 4), ctx.fill();
+      ctx.fillStyle = this.roof;
+      ctx.beginPath(); ctx.moveTo(this.x - 76, gy - 316); ctx.lineTo(this.x, gy - 410); ctx.lineTo(this.x + 76, gy - 316); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = '#8a5236';
+      ctx.beginPath(); ctx.moveTo(this.x - 24, gy + 2); ctx.lineTo(this.x - 24, gy - 44); ctx.arc(this.x, gy - 44, 24, Math.PI, 0); ctx.lineTo(this.x + 24, gy + 2); ctx.fill();
+    }
     if (!this.solved && !this.locked) touchGlow(f.x, f.y, 80);
     drawClockFace(f.x, f.y, f.r, this.shown, this.solved);
   }
 
+  private drawLighthouse(gy: number): void {
+    for (let i = 0; i < 6; i++) {
+      const y0 = gy - i * 60, y1 = y0 - 60, w0 = 70 - i * 6, w1 = 70 - (i + 1) * 6;
+      ctx.fillStyle = i % 2 ? '#ffffff' : '#e8455a';
+      ctx.beginPath(); ctx.moveTo(this.x - w0, y0); ctx.lineTo(this.x - w1, y1); ctx.lineTo(this.x + w1, y1); ctx.lineTo(this.x + w0, y0); ctx.closePath(); ctx.fill();
+    }
+    ctx.fillStyle = '#3a3a4a'; ctx.fillRect(this.x - 40, gy - 372, 80, 12);
+    ctx.fillStyle = this.solved ? '#fff4a8' : '#8ab0c8'; ctx.fillRect(this.x - 30, gy - 420, 60, 48);
+    ctx.fillStyle = '#e8455a'; ctx.beginPath(); ctx.moveTo(this.x - 40, gy - 420); ctx.lineTo(this.x, gy - 460); ctx.lineTo(this.x + 40, gy - 420); ctx.closePath(); ctx.fill();
+  }
+
   drawLight(w: World): void {
     const f = this.face(w);
+    if (this.lighthouse && this.solved) {
+      const gy = w.ground(this.x), a = Math.sin(V.time * 1.2) * 0.6;
+      const g = ctx.createLinearGradient(this.x, 0, this.x + Math.cos(a) * 700, 0);
+      g.addColorStop(0, 'rgba(255,250,200,0.5)'); g.addColorStop(1, 'rgba(255,250,200,0)');
+      ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(this.x, gy - 396);
+      ctx.lineTo(this.x + Math.cos(a) * 700, gy - 396 + Math.sin(a) * 700 - 80); ctx.lineTo(this.x + Math.cos(a) * 700, gy - 396 + Math.sin(a) * 700 + 80); ctx.closePath(); ctx.fill();
+      glow(this.x, gy - 396, 120, 'rgba(255,250,200,A)', 0.7);
+    }
     glow(f.x, f.y, this.solved ? 140 : 80, 'rgba(255,230,150,A)', this.solved ? 0.5 : 0.25);
   }
 

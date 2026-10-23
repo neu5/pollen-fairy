@@ -70,6 +70,7 @@ export interface LevelDef {
   noDecorIn?: [number, number][]; // x ranges kept clear (rivers…)
   setup?(w: World): void;    // spawn entities
   hints?: boolean;           // show walk / fly hints
+  swim?: boolean;            // under water: slow sinking, swimming up never gets tired
   winText?: string;
 }
 
