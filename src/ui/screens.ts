@@ -6,7 +6,7 @@ import { t, type Key } from '../i18n';
 // DOM screens: title, who's playing, new kid, confirm, level map, end card.
 
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
-const SCREENS = ['title', 'who', 'newkid', 'wardrobe', 'confirm', 'map', 'end'] as const;
+const SCREENS = ['title', 'who', 'newkid', 'wardrobe', 'confirm', 'map', 'pause', 'end'] as const;
 export type ScreenId = typeof SCREENS[number] | 'level';
 
 export function show(id: ScreenId): void {
