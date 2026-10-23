@@ -390,3 +390,7 @@ body[data-screen="title"] .langs, body[data-screen="who"] .langs, body[data-scre
 }
 .langs button svg { width: 100%; height: 100%; display: block; border-radius: 5px; box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.12); }
 .langs button.on { opacity: 1; background: #fff4cc; box-shadow: 0 0 0 3px #ffcf3a inset; transform: scale(1.05); }
+
+/* no double-tap zoom on phones (buttons still respond right away) */
+*, *::before, *::after { touch-action: manipulation; }
+html, body, #game, .tbtn { touch-action: none; }

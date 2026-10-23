@@ -5,6 +5,7 @@ import { clearFx, spawnConfetti, updateFx } from './engine/fx';
 import { clamp, damp } from './util';
 import { Sound } from './sound';
 import { DEBUG } from './debug';
+import { blockZoom } from './engine/noZoom';
 import { applyDom, onLangChange, setLang, t, type Key, type Lang } from './i18n';
 import { createWorld, starsFor } from './game/world';
 import { updatePlayer } from './game/player';
@@ -19,6 +20,7 @@ import { setLook } from './game/look';
 
 // Pollen Fairy — screens, game loop, level flow.
 
+blockZoom();
 window.addEventListener('resize', () => { resize(); if (screen === 'map') goMap(); });
 resize();
 
