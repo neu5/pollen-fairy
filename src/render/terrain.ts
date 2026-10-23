@@ -367,7 +367,7 @@ export function drawZ(x: number, y: number, phase: number, size = 12): void {
   ctx.save();
   ctx.globalAlpha = Math.sin(zt * Math.PI) * 0.75;
   ctx.fillStyle = '#7d6bb8';
-  ctx.font = `700 ${size + zt * size * 0.5}px Fredoka, sans-serif`;
+  ctx.font = `700 ${size + zt * size * 0.5}px "Baloo 2", sans-serif`;
   ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
   ctx.fillText('z', x + zt * size, y - zt * size * 2);
   ctx.restore();

@@ -2,6 +2,7 @@ import { ctx, V, IS_TOUCH, screenSpace } from '../engine/view';
 import { glow } from '../engine/fx';
 import { TAU, clamp, damp, ease, circle, rr } from '../util';
 import type { World } from '../game/types';
+import { t } from '../i18n';
 
 const JAR_X = 58, JAR_Y = 62;
 
@@ -57,7 +58,7 @@ export function drawJar(w: World): void {
   ctx.fillStyle = '#c98a4b'; rr(ctx, -19, -33, 38, 11, 5); ctx.fill();
   ctx.fillStyle = '#e5a96a'; rr(ctx, -19, -33, 38, 4, 2); ctx.fill();
   ctx.restore();
-  ctx.font = '700 34px Fredoka, sans-serif'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+  ctx.font = '700 34px "Baloo 2", sans-serif'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
   ctx.lineJoin = 'round'; ctx.lineWidth = 7; ctx.strokeStyle = 'rgba(110,60,140,0.55)';
   const txt = `${w.collected} / ${w.total}`;
   ctx.strokeText(txt, 98, 64); ctx.fillStyle = '#ffffff'; ctx.fillText(txt, 98, 64);
@@ -92,7 +93,7 @@ function drawKey(x: number, y: number, kw: number, label: string): void {
     ctx.fillStyle = '#6a4bb0'; ctx.fillRect(-1, -7, 2, 15);
     ctx.restore();
   } else {
-    ctx.font = '700 15px Fredoka, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.font = '700 15px "Baloo 2", sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     ctx.fillText(label, x + kw / 2, y + 18);
   }
 }
@@ -113,5 +114,5 @@ function drawHintBubble(w: World, a: number, keys: { w: number; label: string }[
 
 export function drawHints(w: World): void {
   drawHintBubble(w, w.hints.walkA, [{ w: 40, label: 'left' }, { w: 40, label: 'right' }]);
-  drawHintBubble(w, w.hints.flyA, IS_TOUCH ? [{ w: 52, label: 'wing' }] : [{ w: 92, label: 'SPACE' }, { w: 40, label: 'wing' }]);
+  drawHintBubble(w, w.hints.flyA, IS_TOUCH ? [{ w: 52, label: 'wing' }] : [{ w: 92, label: t('key.space') }, { w: 40, label: 'wing' }]);
 }

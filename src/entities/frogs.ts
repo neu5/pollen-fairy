@@ -157,7 +157,7 @@ export class FrogChoir implements Entity {
       if (this.state === 'listen') {
         // little ear: "your turn"
         ctx.fillStyle = '#6a4bb0';
-        ctx.font = '700 18px Fredoka, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.font = '700 18px "Baloo 2", sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
         ctx.fillText('♪', mid.x + n * 14 + 34, y + Math.sin(V.time * 5) * 3);
       }
       ctx.restore();

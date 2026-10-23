@@ -5,6 +5,7 @@ import { clearFx, spawnConfetti, updateFx } from './engine/fx';
 import { clamp, damp } from './util';
 import { Sound } from './sound';
 import { DEBUG } from './debug';
+import { applyDom, onLangChange, setLang, t, type Key, type Lang } from './i18n';
 import { createWorld, starsFor } from './game/world';
 import { updatePlayer } from './game/player';
 import type { World } from './game/types';
@@ -48,7 +49,7 @@ function goWho(): void {
     pick: p => { profile = p; Save.select(p.id); goMap(); },
     add: goNewKid,
     dress: p => goWardrobe(p, goWho),
-    remove: p => confirm(`Remove ${p.name}?`, () => { Save.remove(p.id); goWho(); }, goWho),
+    remove: p => confirm(t('remove.ask', { name: p.name }), () => { Save.remove(p.id); goWho(); }, goWho),
   });
   setScreen('who');
 }
@@ -95,7 +96,7 @@ function levelWon(): void {
   const id = world.def.id, stars = starsFor(world);
   Save.finish(profile.id, id, stars);
   const nextDef = getLevel(id + 1);
-  showEnd(profile.name, world.def.winText ?? 'You did it!', stars, `${world.collected} / ${world.total}`, {
+  showEnd(profile.name, t(`w${id}` as Key), stars, `${world.collected} / ${world.total}`, {
     map: goMap,
     replay: () => startLevel(id),
     next: nextDef ? () => startLevel(id + 1) : null,
@@ -104,6 +105,13 @@ function levelWon(): void {
 }
 
 $('play').addEventListener('click', () => { Sound.init(); goWho(); });
+
+// language flags: re-draw screens built in code so their labels change too
+document.querySelectorAll<HTMLButtonElement>('#langs button').forEach(b => {
+  b.addEventListener('click', () => { setLang(b.dataset.lang as Lang); b.blur(); });
+});
+onLangChange(() => { if (screen === 'who') goWho(); });
+applyDom();
 $('home').addEventListener('click', () => { goMap(); });
 
 const muteBtn = $('mute');
