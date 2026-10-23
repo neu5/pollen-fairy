@@ -464,3 +464,21 @@ html, body, #game, .tbtn { touch-action: none; }
 .numbers-pad button.no { animation: shake 0.4s; background: #ffd6e4; }
 .numbers-pad button.hint { box-shadow: 0 5px 0 #f0b850, 0 0 0 4px #ffcf3a inset; background: #fff4cc; }
 .numbers-pad button.yes { background: #c8f5c8; box-shadow: 0 5px 0 #7ed08a; }
+
+/* ---------- level goal ---------- */
+#intro { background: rgba(60, 40, 110, 0.3); }
+.goal-card { max-width: 640px; gap: 16px; }
+.card .goal-title { margin: 0; font-size: clamp(30px, 5vw, 44px); color: #ff6fae; text-shadow: 0 3px 0 #ffd2e8; }
+.goal { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.goal-steps { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px; }
+.goal-step {
+  min-width: 64px; height: 64px; padding: 0 8px; box-sizing: border-box; border-radius: 20px; background: #fff4cc;
+  box-shadow: 0 4px 0 #f0d080; display: grid; place-items: center; font-size: 38px; font-weight: 700; color: #5b3a8c; line-height: 1;
+}
+.goal-arrow { font-size: 40px; font-weight: 700; color: #c9b8f0; margin: 0 -2px; }
+.goal-join { font-size: 34px; font-weight: 700; color: #5b3a8c; }
+.goal-text { margin: 0; font-size: clamp(18px, 2.6vw, 23px); color: var(--ink); line-height: 1.35; max-width: 540px; }
+.goal.small .goal-step { min-width: 46px; height: 46px; font-size: 26px; border-radius: 14px; }
+.goal.small .goal-arrow { font-size: 28px; }
+.goal.small .goal-text { font-size: 16px; max-width: 420px; }
+@media (max-aspect-ratio: 1/1) { .goal-step { min-width: 52px; height: 52px; font-size: 30px; } }

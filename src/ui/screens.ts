@@ -6,7 +6,7 @@ import { t, type Key } from '../i18n';
 // DOM screens: title, who's playing, new kid, confirm, level map, end card.
 
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
-const SCREENS = ['title', 'who', 'newkid', 'wardrobe', 'confirm', 'chapters', 'map', 'pause', 'again', 'end'] as const;
+const SCREENS = ['title', 'who', 'newkid', 'wardrobe', 'confirm', 'chapters', 'map', 'intro', 'pause', 'again', 'end'] as const;
 export type ScreenId = typeof SCREENS[number] | 'level';
 
 export function show(id: ScreenId): void {
@@ -160,6 +160,26 @@ export function renderMap(p: Profile, ch: Chapter, play: (key: string) => void, 
   const m = $('mapMarker');
   Object.assign(m.style, at(current - 1));
   show('map');
+}
+
+// What to do in a level: picture steps with arrows between, and one short sentence.
+const JOINERS = new Set(['➡️', '➕', '=', '…']);
+export function renderGoal(box: HTMLElement, goal: { steps: string[]; text: string } | null): void {
+  box.replaceChildren();
+  if (!goal) return;
+  const row = el('div', 'goal-steps');
+  goal.steps.forEach((st, i) => {
+    if (i > 0 && !JOINERS.has(st) && !JOINERS.has(goal.steps[i - 1])) row.append(el('span', 'goal-arrow', '›'));
+    row.append(el('span', JOINERS.has(st) ? 'goal-join' : 'goal-step', st));
+  });
+  box.append(row, el('p', 'goal-text', goal.text));
+}
+
+export function showIntro(title: string, goal: { steps: string[]; text: string } | null, go: () => void): void {
+  $('introTitle').textContent = title;
+  renderGoal($('introGoal'), goal);
+  $('introGo').onclick = go;
+  show('intro');
 }
 
 export interface EndHandlers { map(): void; replay(): void; next: (() => void) | null }

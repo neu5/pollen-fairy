@@ -13,8 +13,9 @@ import type { World } from './game/types';
 import { renderWorld } from './render/scene';
 import { updateHud } from './render/hud';
 import { CHAPTERS, getLevel, getSlot, nextKey, type Chapter } from './levels';
+import { goalFor } from './levels/goals';
 import { Save, type Profile } from './save';
-import { show, renderWho, askName, confirm, renderMap, renderChapters, showEnd, type ScreenId } from './ui/screens';
+import { show, renderWho, askName, confirm, renderMap, renderChapters, showEnd, showIntro, renderGoal, type ScreenId } from './ui/screens';
 import { openWardrobe, tickWardrobe } from './ui/wardrobe';
 import { setLook } from './game/look';
 import { Modal } from './ui/modal';
@@ -102,7 +103,12 @@ function startLevel(key: string): void {
   world.mode = 'play';
   ended = false;
   snapCamera();
-  setScreen('level');
+  // first show what to do; the level waits until ▶ is pressed
+  const slot = getSlot(key)!;
+  screen = 'intro';
+  $('home').classList.remove('show');
+  $('touch').classList.remove('show');
+  showIntro(`${slot.n}. ${t(`l${key}` as Key)}`, goalFor(key), () => setScreen('level'));
 }
 
 function levelWon(): void {
@@ -136,6 +142,7 @@ $('againGo').addEventListener('click', () => startLevel(world.def.id));
 function pause(): void {
   if (screen !== 'level' || world.mode !== 'play' || Modal.open) return;
   releaseAll();
+  renderGoal($('pauseGoal'), goalFor(world.def.id));
   setScreen('pause');
 }
 function resume(): void {
@@ -157,6 +164,7 @@ bindInput(code => {
   if (code === 'Escape' || code === 'KeyP') { if (screen === 'level') pause(); else if (screen === 'pause') resume(); }
   else if (screen === 'pause' && (code === 'Enter' || code === 'Space')) resume();
   else if (screen === 'again' && code === 'Enter') startLevel(world.def.id);
+  else if (screen === 'intro' && (code === 'Enter' || code === 'Space')) setScreen('level');
   if (!DEBUG || !profile) return;
   // debug keys: N = finish this level now, 1…9 / 0 = jump to level 1…10 of this chapter, C = next chapter
   if (code === 'KeyN' && screen === 'level' && world.mode === 'play') debugWin();
@@ -224,7 +232,7 @@ let last = performance.now();
 function frame(now: number): void {
   const dt = clamp((now - last) / 1000, 0, 0.033);
   last = now;
-  if (screen !== 'pause' && screen !== 'again' && !Modal.open) update(dt);
+  if (screen !== 'pause' && screen !== 'again' && screen !== 'intro' && !Modal.open) update(dt);
   renderWorld(world);
   requestAnimationFrame(frame);
 }
