@@ -58,7 +58,7 @@ export function drawJar(w: World): void {
   ctx.fillStyle = '#c98a4b'; rr(ctx, -19, -33, 38, 11, 5); ctx.fill();
   ctx.fillStyle = '#e5a96a'; rr(ctx, -19, -33, 38, 4, 2); ctx.fill();
   ctx.restore();
-  ctx.font = '700 34px Fredoka, sans-serif'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+  ctx.font = '700 34px "Baloo 2", sans-serif'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
   ctx.lineJoin = 'round'; ctx.lineWidth = 7; ctx.strokeStyle = 'rgba(110,60,140,0.55)';
   const txt = `${w.collected} / ${w.total}`;
   ctx.strokeText(txt, 98, 64); ctx.fillStyle = '#ffffff'; ctx.fillText(txt, 98, 64);
@@ -93,7 +93,7 @@ function drawKey(x: number, y: number, kw: number, label: string): void {
     ctx.fillStyle = '#6a4bb0'; ctx.fillRect(-1, -7, 2, 15);
     ctx.restore();
   } else {
-    ctx.font = '700 15px Fredoka, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.font = '700 15px "Baloo 2", sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     ctx.fillText(label, x + kw / 2, y + 18);
   }
 }
