@@ -1,4 +1,3 @@
-import './style.css';
 import { V, IS_TOUCH, resize } from './engine/view';
 import { bindInput, releaseAll } from './engine/input';
 import { clearFx, spawnConfetti, updateFx } from './engine/fx';
@@ -239,6 +238,8 @@ function frame(now: number): void {
 snapCamera();
 setScreen('title');
 requestAnimationFrame(frame);
+// everything is set up: let the title fade in
+requestAnimationFrame(() => document.body.classList.add('ready'));
 
 // console helpers in debug mode: __pf.goto('1-2'), __pf.win(), __pf.step(5), __pf.tp(1200, 400)
 if (DEBUG) {

@@ -8,6 +8,12 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/src/style.css">
+  <style>
+    /* until the game script is ready, show only the sky colour (no half-styled windows) */
+    html, body { margin: 0; background: #9fd8fb; }
+    body:not(.ready) > :not(#game) { visibility: hidden; }
+  </style>
 </head>
 <body>
   <canvas id="game"></canvas>
