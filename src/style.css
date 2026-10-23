@@ -383,7 +383,7 @@ kbd {
   position: fixed; top: 18px; left: 18px; z-index: 6; display: none; gap: 8px; padding: 7px;
   background: rgba(255, 255, 255, 0.75); border-radius: 999px; box-shadow: 0 5px 16px rgba(90, 60, 140, 0.2);
 }
-body[data-screen="title"] .langs, body[data-screen="who"] .langs, body[data-screen="newkid"] .langs { display: flex; }
+body[data-screen="title"] .langs, body[data-screen="who"] .langs, body[data-screen="chapters"] .langs, body[data-screen="newkid"] .langs { display: flex; }
 .langs button {
   width: 52px; height: 40px; padding: 5px; border: 0; border-radius: 14px; background: transparent;
   opacity: 0.55; transition: opacity 0.15s, transform 0.15s;
@@ -394,3 +394,30 @@ body[data-screen="title"] .langs, body[data-screen="who"] .langs, body[data-scre
 /* no double-tap zoom on phones (buttons still respond right away) */
 *, *::before, *::after { touch-action: manipulation; }
 html, body, #game, .tbtn { touch-action: none; }
+
+/* ---------- chapter picker ---------- */
+#chapters { background: radial-gradient(ellipse at 50% 50%, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.15) 70%); justify-content: flex-start; padding-top: 18px; }
+#chapters .map-top { justify-content: flex-end; padding-right: 90px; }
+.chapters { display: flex; flex-wrap: wrap; gap: 18px; justify-content: center; max-width: 980px; margin: auto 0; }
+.chapter {
+  --c: #ffd166; position: relative; width: 168px; padding: 20px 10px 16px; border: 0; border-radius: 34px;
+  background: radial-gradient(circle at 50% 30%, #fff, color-mix(in srgb, var(--c) 45%, #fff) 80%);
+  box-shadow: 0 8px 0 color-mix(in srgb, var(--c) 70%, #8a6ac0), 0 14px 30px rgba(90, 60, 140, 0.18);
+  display: flex; flex-direction: column; align-items: center; gap: 6px; transition: transform 0.15s;
+}
+.chapter:hover { transform: translateY(-4px) rotate(-1deg); }
+.chapter .icon { font-size: 58px; line-height: 1.1; }
+.chapter .name { font-size: 20px; font-weight: 700; color: var(--ink); line-height: 1.1; }
+.chapter .num {
+  position: absolute; top: -8px; left: -8px; width: 36px; height: 36px; border-radius: 50%;
+  background: #6a4bb0; color: #fff; font-size: 18px; font-weight: 700; display: grid; place-items: center;
+}
+.chapter.locked { filter: grayscale(0.8); opacity: 0.7; cursor: default; }
+.chapter.locked:hover { transform: none; }
+.map-title {
+  margin-left: auto; align-self: center; background: rgba(255, 255, 255, 0.85); color: var(--ink);
+  font-size: 22px; font-weight: 700; padding: 6px 18px; border-radius: 999px; box-shadow: 0 4px 12px rgba(90, 60, 140, 0.15);
+}
+#map .map-top { padding-right: 90px; }
+.map-path path { stroke: color-mix(in srgb, var(--chapter, #fff) 35%, #fff); }
+@media (max-aspect-ratio: 1/1) { .chapter { width: 140px; } .chapter .icon { font-size: 46px; } .map-title { font-size: 17px; } }

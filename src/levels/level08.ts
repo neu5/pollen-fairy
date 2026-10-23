@@ -4,7 +4,7 @@ import type { LevelDef } from '../game/types';
 // Level 8: Autumn Woods — find the squirrel's 5 acorns hidden in leaf piles.
 
 export const level08: LevelDef = {
-  id: 8,
+  id: '1-8',
   name: 'Autumn Woods',
   icon: '🍂',
   theme: 'autumn',

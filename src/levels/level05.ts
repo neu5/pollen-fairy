@@ -6,7 +6,7 @@ import type { LevelDef } from '../game/types';
 const NEST_X = 3180, NEST_Y = 70;
 
 export const level05: LevelDef = {
-  id: 5,
+  id: '1-5',
   name: 'Windy Hill',
   icon: '🐦',
   theme: 'windy',

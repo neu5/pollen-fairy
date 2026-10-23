@@ -12,9 +12,9 @@ import { updatePlayer } from './game/player';
 import type { World } from './game/types';
 import { renderWorld } from './render/scene';
 import { updateHud } from './render/hud';
-import { LEVELS, getLevel } from './levels';
+import { CHAPTERS, getLevel, getSlot, nextKey, type Chapter } from './levels';
 import { Save, type Profile } from './save';
-import { show, renderWho, askName, confirm, renderMap, showEnd, type ScreenId } from './ui/screens';
+import { show, renderWho, askName, confirm, renderMap, renderChapters, showEnd, type ScreenId } from './ui/screens';
 import { openWardrobe, tickWardrobe } from './ui/wardrobe';
 import { setLook } from './game/look';
 
@@ -25,9 +25,10 @@ window.addEventListener('resize', () => { resize(); if (screen === 'map') goMap(
 resize();
 
 const $ = (id: string) => document.getElementById(id) as HTMLElement;
-let world: World = createWorld(getLevel(1)!);
+let world: World = createWorld(getLevel('1-1')!);
 let screen: ScreenId = 'title';
 let profile: Profile | null = null;
+let chapter: Chapter = CHAPTERS[0];
 let ended = false;
 
 function setScreen(s: ScreenId): void {
@@ -48,7 +49,7 @@ function snapCamera(): void {
 function goWho(): void {
   if (!Save.profiles().length) { goNewKid(); return; }
   renderWho({
-    pick: p => { profile = p; Save.select(p.id); goMap(); },
+    pick: p => { profile = p; Save.select(p.id); goChapters(); },
     add: goNewKid,
     dress: p => goWardrobe(p, goWho),
     remove: p => confirm(t('remove.ask', { name: p.name }), () => { Save.remove(p.id); goWho(); }, goWho),
@@ -59,7 +60,7 @@ function goWho(): void {
 function goNewKid(): void {
   screen = 'newkid';
   askName(
-    name => { profile = Save.add(name); goWardrobe(profile, goMap); },
+    name => { profile = Save.add(name); goWardrobe(profile, goChapters); },
     () => (Save.profiles().length ? goWho() : setScreen('title')),
   );
   $('home').classList.remove('show');
@@ -71,18 +72,28 @@ function goWardrobe(p: Profile, then: () => void): void {
   openWardrobe(p.name, p.look, look => { Save.setLook(p.id, look); then(); });
 }
 
+function goChapters(): void {
+  if (!profile) { goWho(); return; }
+  world.mode = 'idle';
+  releaseAll();
+  setLook(profile.look);
+  renderChapters(profile, ch => { chapter = ch; goMap(); }, goWho);
+  setScreen('chapters');
+}
+
 function goMap(): void {
   if (!profile) { goWho(); return; }
   world.mode = 'idle';
   releaseAll();
   setLook(profile.look);
-  renderMap(profile, startLevel, goWho, () => goWardrobe(profile!, goMap));
+  renderMap(profile, chapter, startLevel, goChapters, () => goWardrobe(profile!, goMap));
   setScreen('map');
 }
 
-function startLevel(id: number): void {
-  const def = getLevel(id);
+function startLevel(key: string): void {
+  const def = getLevel(key);
   if (!def) return;
+  chapter = CHAPTERS[getSlot(key)!.chapter - 1];
   if (profile) setLook(profile.look);
   Sound.init(); Sound.startAmbient();
   clearFx();
@@ -97,11 +108,11 @@ function levelWon(): void {
   if (!profile) return;
   const id = world.def.id, stars = starsFor(world);
   Save.finish(profile.id, id, stars);
-  const nextDef = getLevel(id + 1);
+  const next = nextKey(id);
   showEnd(profile.name, t(`w${id}` as Key), stars, `${world.collected} / ${world.total}`, {
     map: goMap,
     replay: () => startLevel(id),
-    next: nextDef ? () => startLevel(id + 1) : null,
+    next: next ? () => startLevel(next) : null,
   });
   screen = 'end';
 }
@@ -112,7 +123,7 @@ $('play').addEventListener('click', () => { Sound.init(); goWho(); });
 document.querySelectorAll<HTMLButtonElement>('#langs button').forEach(b => {
   b.addEventListener('click', () => { setLang(b.dataset.lang as Lang); b.blur(); });
 });
-onLangChange(() => { if (screen === 'who') goWho(); });
+onLangChange(() => { if (screen === 'who') goWho(); else if (screen === 'chapters') goChapters(); });
 applyDom();
 $('home').addEventListener('click', () => { pause(); $('home').blur(); });
 $('pausePlay').addEventListener('click', resume);
@@ -144,10 +155,11 @@ bindInput(code => {
   if (code === 'Escape' || code === 'KeyP') { if (screen === 'level') pause(); else if (screen === 'pause') resume(); }
   else if (screen === 'pause' && (code === 'Enter' || code === 'Space')) resume();
   if (!DEBUG || !profile) return;
-  // debug keys: N = finish this level now, 1…9 / 0 = jump to level 1…10
+  // debug keys: N = finish this level now, 1…9 / 0 = jump to level 1…10 of this chapter, C = next chapter
   if (code === 'KeyN' && screen === 'level' && world.mode === 'play') debugWin();
+  if (code === 'KeyC' && screen === 'map') { chapter = CHAPTERS[chapter.id % CHAPTERS.length]; goMap(); }
   const digit = code.match(/^Digit(\d)$/);
-  if (digit && (screen === 'level' || screen === 'map' || screen === 'end')) startLevel(+digit[1] || 10);
+  if (digit && (screen === 'level' || screen === 'map' || screen === 'end')) startLevel(`${chapter.id}-${+digit[1] || 10}`);
 });
 
 function debugWin(): void {
@@ -159,7 +171,7 @@ function debugWin(): void {
 if (DEBUG) {
   const tag = document.createElement('div');
   tag.className = 'debug-tag';
-  tag.textContent = 'DEBUG · N = win · 1-0 = level';
+  tag.textContent = 'DEBUG · N = win · 1-0 = level · C = chapter (map)';
   document.body.append(tag);
 }
 
@@ -215,14 +227,14 @@ snapCamera();
 setScreen('title');
 requestAnimationFrame(frame);
 
-// console helpers in debug mode: __pf.goto(2), __pf.win(), __pf.step(5), __pf.tp(1200, 400)
+// console helpers in debug mode: __pf.goto('1-2'), __pf.win(), __pf.step(5), __pf.tp(1200, 400)
 if (DEBUG) {
   (window as unknown as { __pf: unknown }).__pf = {
     get world() { return world; },
     get screen() { return screen; },
-    goto(id: number) { if (!profile) profile = Save.last() ?? Save.add('Test'); startLevel(id); },
+    goto(key: string) { if (!profile) profile = Save.last() ?? Save.add('Test'); startLevel(key); },
     win: debugWin,
-    levels: LEVELS,
+    chapters: CHAPTERS,
     // run the game forward without drawing
     step(sec: number) { for (let i = 0; i < sec * 60; i++) update(1 / 60); renderWorld(world); },
     // move the fairy

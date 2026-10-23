@@ -10,20 +10,47 @@ import { level09 } from './level09';
 import { level10 } from './level10';
 import type { LevelDef } from '../game/types';
 
-// All 10 stops on the map. Levels not built yet have def: null (shown as "soon").
-export interface LevelSlot { id: number; name: string; icon: string; def: LevelDef | null }
+// 5 chapters × 10 levels. Level keys are 'chapter-level', e.g. '2-3'.
+// Levels not built yet have def: null (shown locked on the map).
+
+export const PER_CHAPTER = 10;
+
+export interface LevelSlot { key: string; chapter: number; n: number; icon: string; def: LevelDef | null }
+export interface Chapter { id: number; icon: string; color: string; levels: LevelSlot[] }
 
 const built: LevelDef[] = [level01, level02, level03, level04, level05, level06, level07, level08, level09, level10];
 
-const PLANNED: [string, string][] = [
-  ['Sleepy Meadow', '🌼'], ["Snail's Slow Trip", '🐌'], ['Night Garden', '🌙'], ['Rainy Day', '🌧️'],
-  ['Windy Hill', '🐦'], ['Frog Pond', '🐸'], ['Grey Garden', '🎨'], ['Autumn Woods', '🍂'],
-  ['Crystal Cave', '💎'], ['Rainbow Festival', '🌈'],
+const ICONS: string[][] = [
+  ['🌼', '🐌', '🌙', '🌧️', '🐦', '🐸', '🎨', '🍂', '💎', '🌈'],
+  ['👓', '🦡', '🕗', '🦔', '🐛', '⭐', '🦉', '🦊', '🦋', '🌕'],
+  ['🌱', '🐝', '🎨', '🥕', '🪱', '🌳', '☁️', '🍎', '⛄', '🌸'],
+  ['🦆', '♻️', '🦫', '🛶', '💧', '🐟', '🗼', '🦀', '🐢', '🐠'],
+  ['🐐', '🔥', '⚖️', '☁️', '❄️', '🌙', '🎈', '🕰️', '✨', '🏰'],
 ];
+const COLORS = ['#ffd166', '#a99cff', '#8fe388', '#6cc4ff', '#ffb3c6'];
+const CH_ICONS = ['🌼', '🦉', '🌱', '🌊', '⛰️'];
 
-export const LEVELS: LevelSlot[] = PLANNED.map(([name, icon], i) => {
-  const def = built.find(d => d.id === i + 1) ?? null;
-  return { id: i + 1, name: def?.name ?? name, icon: def?.icon ?? icon, def };
-});
+export const CHAPTERS: Chapter[] = ICONS.map((icons, ci) => ({
+  id: ci + 1,
+  icon: CH_ICONS[ci],
+  color: COLORS[ci],
+  levels: icons.map((icon, li) => {
+    const key = `${ci + 1}-${li + 1}`;
+    const def = built.find(d => d.id === key) ?? null;
+    return { key, chapter: ci + 1, n: li + 1, icon: def?.icon ?? icon, def };
+  }),
+}));
 
-export const getLevel = (id: number): LevelDef | null => LEVELS[id - 1]?.def ?? null;
+export const getSlot = (key: string): LevelSlot | null => {
+  const [c, n] = key.split('-').map(Number);
+  return CHAPTERS[c - 1]?.levels[n - 1] ?? null;
+};
+export const getLevel = (key: string): LevelDef | null => getSlot(key)?.def ?? null;
+
+// The next level in the same chapter, if it is built.
+export function nextKey(key: string): string | null {
+  const s = getSlot(key);
+  if (!s) return null;
+  const n = CHAPTERS[s.chapter - 1].levels[s.n];
+  return n?.def ? n.key : null;
+}

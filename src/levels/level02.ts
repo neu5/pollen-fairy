@@ -10,7 +10,7 @@ const RA = 2600, RB = 2900, SURFACE = 620;
 const sstep = (a: number, b: number, x: number) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
 
 export const level02: LevelDef = {
-  id: 2,
+  id: '1-2',
   name: "Snail's Slow Trip",
   icon: '🐌',
   theme: 'morning',

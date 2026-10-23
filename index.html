@@ -96,12 +96,23 @@
     </div>
   </div>
 
+  <div id="chapters" class="overlay">
+    <div class="map-top">
+      <button id="chaptersBack" class="pill ghost" data-i18n-aria="a.changePlayer" aria-label="Change player">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7"/></svg>
+      </button>
+    </div>
+    <h2 class="screen-title" data-i18n="chapters">Choose an adventure</h2>
+    <div id="chapterCards" class="chapters"></div>
+  </div>
+
   <div id="map" class="overlay">
     <div class="map-top">
-      <button id="mapBack" class="pill ghost" data-i18n-aria="a.changePlayer" aria-label="Change player">
+      <button id="mapBack" class="pill ghost" data-i18n-aria="a.chapters" aria-label="Adventures">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7"/></svg>
       </button>
       <button id="mapDress" class="pill dress-btn" data-i18n-aria="a.dress" aria-label="Dress up">👗</button>
+      <span id="mapTitle" class="map-title"></span>
     </div>
     <div class="map-board">
       <svg id="mapSvg" class="map-path" viewBox="0 0 1000 560" preserveAspectRatio="none" aria-hidden="true">

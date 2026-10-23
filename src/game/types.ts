@@ -56,7 +56,7 @@ export interface Entity {
 }
 
 export interface LevelDef {
-  id: number;
+  id: string;               // 'chapter-level', e.g. '2-3'
   name: string;
   icon: string;
   theme: string;

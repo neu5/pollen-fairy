@@ -8,7 +8,7 @@ import type { LevelDef } from '../game/types';
 const ground = (x: number) => 598 - 28 * Math.sin(x * 0.0022 + 0.2) - 14 * Math.sin(x * 0.0061 + 1.3) - 5 * Math.sin(x * 0.017);
 
 export const level10: LevelDef = {
-  id: 10,
+  id: '1-10',
   name: 'Rainbow Festival',
   icon: '🌈',
   theme: 'sunset',

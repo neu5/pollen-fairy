@@ -6,7 +6,7 @@ import type { LevelDef } from '../game/types';
 const TREE_X = 3480;
 
 export const level01: LevelDef = {
-  id: 1,
+  id: '1-1',
   name: 'Sleepy Meadow',
   icon: '🌼',
   theme: 'meadow',

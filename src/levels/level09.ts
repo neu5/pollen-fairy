@@ -4,7 +4,7 @@ import type { LevelDef } from '../game/types';
 // Level 9: Crystal Cave — light the crystals so the mole family can find the way out.
 
 export const level09: LevelDef = {
-  id: 9,
+  id: '1-9',
   name: 'Crystal Cave',
   icon: '💎',
   theme: 'cave',
