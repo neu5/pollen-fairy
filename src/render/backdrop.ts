@@ -189,7 +189,7 @@ function buildBackdrop(t: Theme): Backdrop {
     for (let i = 0; i < 6; i++) {
       const a = 1.95 + i * 0.13 + Math.sin(V.time * 0.07 + i) * 0.03;
       const len = 1600, w0 = 8, w1 = 60 + (i % 3) * 45;
-      const alpha = (0.05 + 0.035 * Math.sin(V.time * 0.35 + i * 1.7)) * t.rays;
+      const alpha = (0.05 + 0.035 * Math.sin(V.time * 0.35 + i * 1.7)) * t.rays * 0.6;
       const dx = Math.cos(a), dy = Math.sin(a), nx = -dy, ny = dx;
       const g = ctx.createLinearGradient(ox, oy, ox + dx * len, oy + dy * len);
       g.addColorStop(0, `rgba(255,246,210,${alpha * 1.6})`);
