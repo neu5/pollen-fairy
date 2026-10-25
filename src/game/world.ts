@@ -107,6 +107,7 @@ export function createWorld(def: LevelDef): World {
     failed: false,
   };
   def.setup?.(w);
+  spaceFlowers(w);
   return w;
 }
 
@@ -149,4 +150,65 @@ export function playerNear(w: World, x: number, y: number, r: number): boolean {
 export function starsFor(w: World): number {
   const f = w.total ? w.collected / w.total : 1;
   return f >= 0.9 ? 3 : f >= 0.5 ? 2 : 1;
+}
+
+// ------------------------------------------------- keep flowers apart ----
+// Sleepy flowers must not sit on top of the special things in a level (friends, clocks, pots…).
+// After a level is set up, any flower too close to one slides sideways to a free place.
+
+interface Spot { x: number; y: number | null; r: number }   // y null = blocks the whole column
+
+// Some things are big and need more room around them.
+const BIG: Record<string, number> = {
+  Den: 270, MushroomHouse: 170, OwlTree: 230, SeasonTree: 230, Scale: 230, FoxDen: 170,
+  MoonStage: 330, SkyCastle: 220, ClockTower: 120, Nest: 140, SeedPatch: 110, Home: 130,
+};
+
+function spotsOf(e: unknown, w: World): Spot[] {
+  const o = e as Record<string, unknown>;
+  const name = (e as object).constructor?.name ?? '';
+  const out: Spot[] = [];
+  const add = (x: unknown, y: unknown, r: number) => {
+    if (typeof x === 'number' && isFinite(x)) out.push({ x, y: typeof y === 'number' && isFinite(y) ? y : null, r });
+  };
+  if (name === 'River') { const a = o.a as number, b = o.b as number; for (let x = a; x <= b; x += 60) add(x, null, 60); return out; }
+  if (name === 'Updraft') { add(o.x, null, (o.width as number) / 2 + 40); return out; }
+  if (name === 'BigStone') { add(o.x, null, 130); return out; }
+  const r = BIG[name] ?? 95;
+  if (name === 'OwlTree' || name === 'Den') add(o.x, null, r);
+  else add(o.x, o.y, r);
+  for (const list of [o.items, o.pts, o.stones]) if (Array.isArray(list)) for (const it of list) add(it?.x, it?.y, 90);
+  if (Array.isArray(o.rounds)) for (const rd of o.rounds as { clouds?: { x: number; y: number }[] }[]) for (const c of rd.clouds ?? []) add(c.x, c.y, 100);
+  if (o.pl && typeof o.pl === 'object') { const pl = o.pl as { x: number; w: number }; add(pl.x + pl.w / 2, null, pl.w / 2 + 50); }
+  if (o.bridge && typeof o.bridge === 'object') { const b = o.bridge as { x: number; w: number; x0?: number }; if (typeof b.x0 !== 'number') add(b.x + b.w / 2, null, b.w / 2 + 40); }
+  void w;
+  return out;
+}
+
+function spaceFlowers(w: World): void {
+  const spots = w.entities.flatMap(e => spotsOf(e, w));
+  if (!spots.length) return;
+  const headY = (f: Flower, x: number) => (f.on ? f.on.y : w.ground(x)) - f.h;
+  const free = (f: Flower, x: number) => spots.every(s => Math.abs(s.x - x) > s.r || (s.y != null && Math.abs(s.y - headY(f, x)) > 150));
+  const others = (f: Flower, x: number) => w.flowers.every(g => g === f || Math.abs(g.x - x) > 70 || (g.on !== f.on));
+  for (const f of w.flowers) {
+    if (free(f, f.x)) continue;
+    let placed = false;
+    for (let step = 40; step <= 900 && !placed; step += 40) {
+      for (const dir of [1, -1]) {
+        const x = f.x + dir * step;
+        if (f.on ? (x < f.on.x + 20 || x > f.on.x + f.on.w - 20) : (x < 120 || x > w.worldW - 120)) continue;
+        if (free(f, x) && others(f, x)) { f.x = x; if (!f.on) f.by = w.ground(x) + 2; placed = true; break; }
+      }
+    }
+    // no room on its platform: put it on the ground nearby instead
+    if (!placed && f.on) {
+      const base = f.on.x + f.on.w / 2;
+      f.on = null;
+      for (let step = 0; step <= 1200; step += 40) {
+        const x = base + (step / 40 % 2 ? -1 : 1) * step;
+        if (x > 120 && x < w.worldW - 120 && free(f, x) && others(f, x)) { f.x = x; f.by = w.ground(x) + 2; placed = true; break; }
+      }
+    }
+  }
 }
