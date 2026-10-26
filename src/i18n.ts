@@ -1,7 +1,7 @@
 // Languages. Default follows the browser; a picked language is saved on this computer.
 
-export type Lang = 'en' | 'pl';
-export const LANGS: Lang[] = ['en', 'pl'];
+export type Lang = 'en' | 'pl' | 'fr';
+export const LANGS: Lang[] = ['en', 'pl', 'fr'];
 
 const en = {
   'title.a': 'Pollen', 'title.b': 'Fairy', 'doc.title': 'Pollen Fairy',
@@ -107,16 +107,74 @@ const pl: Record<Key, string> = {
   'w5-9': 'Świetnie liczysz!', 'w5-10': 'Dziękujemy, że wszystkim pomagasz!',
 };
 
-const DICT: Record<Lang, Record<Key, string>> = { en, pl };
+const fr: Record<Key, string> = {
+  'title.a': 'Fée', 'title.b': 'Pollen', 'doc.title': 'Fée Pollen',
+  'tag': 'Réveille les fleurs endormies !',
+  'keys.walk': 'marcher', 'keys.space': 'Espace', 'keys.fly': 'maintiens pour voler', 'key.space': 'ESPACE',
+  'who': 'Qui joue ?', 'ask.name': 'Comment s’appelle la fée ?',
+  'new': 'Nouvelle', 'yes': 'Oui', 'no': 'Non',
+  'remove.ask': 'Supprimer {name} ?', 'hooray': 'Hourra, {name} !', 'win.default': 'Tu as réussi !',
+  'a.sound': 'Son activé ou désactivé', 'a.play': 'Jouer', 'a.home': 'Retour à la carte', 'a.back': 'Retour', 'a.ok': 'OK',
+  'a.yourName': 'Nom de la fée', 'a.random': 'Surprise', 'a.done': 'Terminé', 'a.changePlayer': 'Changer de joueur',
+  'a.dress': 'Habiller', 'a.map': 'Carte', 'a.replay': 'Rejouer', 'a.next': 'Niveau suivant',
+  'a.left': 'Aller à gauche', 'a.right': 'Aller à droite', 'a.fly': 'Voler', 'a.lang': 'Langue', 'again': 'Oh ! On recommence ?', 'a.close': 'Fermer', 'a.minBack': 'Grande aiguille en arrière', 'a.minFwd': 'Grande aiguille en avant', 'a.hourBack': 'Petite aiguille en arrière', 'a.hourFwd': 'Petite aiguille en avant', 'paused': 'Pause', 'a.pause': 'Pause', 'a.resume': 'Continuer à jouer', 'a.restart': 'Recommencer',
+  'a.playAs': 'Jouer avec {name}', 'a.remove': 'Supprimer {name}', 'a.dressKid': 'Habiller {name}',
+  'a.newPlayer': 'Nouveau joueur', 'a.locked': '(verrouillé)',
+  'tab.hair': 'Cheveux', 'tab.dress': 'Robe', 'tab.shoes': 'Chaussures', 'tab.wings': 'Ailes',
+  'c.hair': 'Couleur des cheveux', 'c.skin': 'Peau', 'c.dress': 'Couleur de la robe', 'c.shoes': 'Couleur des chaussures',
+  'l1-1': 'La prairie endormie', 'l1-2': 'Le lent voyage de l’escargot', 'l1-3': 'Le jardin de nuit', 'l1-4': 'Jour de pluie', 'l1-5': 'La colline venteuse',
+  'l1-6': 'L’étang des grenouilles', 'l1-7': 'Le jardin gris', 'l1-8': 'La forêt d’automne', 'l1-9': 'La grotte de cristal', 'l1-10': 'La fête de l’arc-en-ciel',
+  'w1-1': 'La Grande Fleur s’épanouit !', 'w1-2': 'L’escargot est chez lui, sain et sauf !', 'w1-3': 'Bonjour, Scarabée !',
+  'w1-4': 'Tout le monde est au sec. Regarde, un arc-en-ciel !', 'w1-5': 'Le bébé oiseau est chez Maman !', 'w1-6': 'Quelle jolie chanson de grenouilles !',
+  'w1-7': 'Toutes les couleurs sont revenues !', 'w1-8': 'L’écureuil a tous ses glands !', 'w1-9': 'Les taupes ont trouvé le soleil !',
+  'w1-10': 'Bienvenue au Château du Ciel !',
+  'ch1': 'Les amis de la prairie', 'ch2': 'Les amis de la nuit', 'ch3': 'Les saisons du jardin', 'ch4': 'Rivière et mer',
+  'ch5': 'Montagnes et ciel', 'chapters': 'Choisis une aventure', 'a.chapter': 'Chapitre {n}',
+  'a.chapters': 'Aventures', 'l2-1': 'Les lunettes de Chouette', 'l2-2': 'Le terrier de Blaireau', 'l2-3': 'La tour de l’horloge',
+  'l2-4': 'Les pommes de Hérisson', 'l2-5': 'Le chemin des vers luisants', 'l2-6': 'Le dessin d’étoiles', 'l2-7': 'L’école de Chouette',
+  'l2-8': 'Les renardeaux', 'l2-9': 'Les lanternes des papillons de nuit', 'l2-10': 'La fête de la Lune', 'l3-1': 'La petite graine', 'l3-2': 'Les abeilles affairées',
+  'l3-3': 'Mélange de couleurs', 'l3-4': 'Le potager de Lapin', 'l3-5': 'Les tunnels du ver', 'l3-6': 'L’arbre des saisons',
+  'l3-7': 'Le champ assoiffé', 'l3-8': 'Le tri des pommes', 'l3-9': 'Les mangeoires d’hiver', 'l3-10': 'La fête du printemps',
+  'l4-1': 'La file de canetons', 'l4-2': 'Nettoyage de la rivière', 'l4-3': 'Le barrage du castor', 'l4-4': 'Flotte ou coule',
+  'l4-5': 'Le cycle de l’eau', 'l4-6': 'Le banc de poissons', 'l4-7': 'Le phare', 'l4-8': 'Les bernard-l’ermite',
+  'l4-9': 'Les bébés tortues', 'l4-10': 'La fête du corail', 'l5-1': 'Le sentier de la chèvre', 'l5-2': 'Renard a froid', 'l5-3': 'Le pont à bascule',
+  'l5-4': 'Les formes des nuages', 'l5-5': 'La course aux flocons', 'l5-6': 'Les phases de la Lune', 'l5-7': 'Le vol en ballon',
+  'l5-8': 'L’horloge de la montagne', 'l5-9': 'Compter les étoiles', 'l5-10': 'La fête des amis',
+  'w2-1': 'Chouette y voit de nouveau !', 'w2-2': 'Dors bien, Blaireau !', 'w2-3': 'Il est 8 heures. Les lampes sont allumées !',
+  'w2-4': 'Hérisson a un délicieux dîner !', 'w2-5': 'Souris a retrouvé son chemin !', 'w2-6': 'Regarde, une chouette faite d’étoiles !',
+  'w2-7': 'L’école de Chouette peut commencer !', 'w2-8': 'Tous les renardeaux sont rentrés !',
+  'w2-9': 'Les papillons de nuit dansent dans la lumière !', 'w2-10': 'Joyeuse fête de la Lune !',
+  'w3-1': 'La petite graine est devenue une fleur !', 'w3-2': 'Toutes les abeilles sont rentrées !',
+  'w3-3': 'Les papillons adorent leurs nouvelles couleurs !', 'w3-4': 'Le potager de Lapin est prêt !',
+  'w3-5': 'Les racines ont de l’eau maintenant !', 'w3-6': 'L’arbre des saisons est heureux de nouveau !',
+  'w3-7': 'Le champ a bien bu !', 'w3-8': 'Toutes les pommes sont triées !',
+  'w3-9': 'Les oiseaux ont chaud et sont rassasiés !', 'w3-10': 'Le printemps est là !', 'w4-1': 'Les canetons sont avec Maman !',
+  'w4-2': 'La rivière est propre de nouveau !', 'w4-3': 'Le barrage est terminé !', 'w4-4': 'Le radeau flotte !',
+  'w4-5': 'L’eau tourne, tourne, tourne !', 'w4-6': 'Les poissons ont atteint le récif !',
+  'w4-7': 'Le phare brille pour les bateaux !', 'w4-8': 'Chaque crabe a une coquille bien douillette !',
+  'w4-9': 'Les bébés tortues ont atteint la mer !', 'w4-10': 'Quelle scintillante fête du corail !', 'w5-1': 'Chèvre est tout en haut !',
+  'w5-2': 'Renard est bien au chaud !', 'w5-3': 'Le pont est bien droit !', 'w5-4': 'De superbes formes de nuages !',
+  'w5-5': 'Dix flocons attrapés !', 'w5-6': 'La Lune est dans le bon ordre !',
+  'w5-7': 'Le ballon flotte juste comme il faut !', 'w5-8': 'Tu es un expert des horloges !', 'w5-9': 'Bravo, tu comptes bien !',
+  'w5-10': 'Merci d’avoir aidé tout le monde !',
+};
+
+const DICT: Record<Lang, Record<Key, string>> = { en, pl, fr };
 const KEY = 'pf-lang';
 
 function detect(): Lang {
   try {
     const saved = localStorage.getItem(KEY);
-    if (saved === 'en' || saved === 'pl') return saved;
+    if (saved === 'en' || saved === 'pl' || saved === 'fr') return saved;
   } catch { /* storage blocked */ }
   const prefs = navigator.languages?.length ? navigator.languages : [navigator.language];
-  return prefs.some(l => l?.toLowerCase().startsWith('pl')) ? 'pl' : 'en';
+  for (const l of prefs) {
+    const c = l?.toLowerCase() ?? '';
+    if (c.startsWith('pl')) return 'pl';
+    if (c.startsWith('fr')) return 'fr';
+    if (c.startsWith('en')) return 'en';
+  }
+  return 'en';
 }
 
 let lang: Lang = detect();
