@@ -31,6 +31,9 @@ export class Squirrel implements Entity {
   happyT = 0;
   flying: Flying[] = [];
   bubbleA = 1;
+  // other friends can use the same "follow me and collect" game with their own looks
+  item: (s: number) => void = drawAcorn;
+  body: ((got: number) => void) | null = null;
   constructor(x: number, public need = 5) { this.x = x; }
 
   give(x: number, y: number): void { this.flying.push({ x0: x, y0: y, t: 0 }); }
@@ -58,6 +61,7 @@ export class Squirrel implements Entity {
     const hop = this.happyT > 0 ? Math.abs(Math.sin(this.happyT * 10)) * 18 : Math.abs(Math.sin(this.hopT * 9)) * 10 * (Math.abs(w.player.x - this.face * 90 - this.x) > 30 ? 1 : 0);
     if (visible(this.x - 80, this.x + 80)) {
       ctx.save(); ctx.translate(this.x, this.y - hop); ctx.scale(this.face * 1.3, 1.3);
+      if (this.body) { this.body(this.got); ctx.restore(); } else {
       // tail
       ctx.fillStyle = '#d07a3a';
       ctx.beginPath(); ctx.moveTo(-10, -10); ctx.bezierCurveTo(-46, -10, -50, -60, -26, -66); ctx.bezierCurveTo(-8, -70, -6, -48, -20, -44); ctx.bezierCurveTo(-30, -40, -26, -24, -6, -20); ctx.fill();
@@ -74,18 +78,19 @@ export class Squirrel implements Entity {
       ctx.fillStyle = 'rgba(255,120,140,0.5)'; circle(ctx, 16, -36, 2.4);
       // paws / feet
       ctx.fillStyle = '#b86a32'; ctx.beginPath(); ctx.ellipse(6, 0, 8, 3.5, 0, 0, TAU); ctx.fill();
-      if (this.got > 0) { ctx.save(); ctx.translate(14, -22); drawAcorn(0.6); ctx.restore(); }
+      if (this.got > 0) { ctx.save(); ctx.translate(14, -22); this.item(0.6); ctx.restore(); }
       ctx.restore();
+      }
     }
     // acorns flying to the squirrel
     for (const f of this.flying) {
       const u = ease(f.t), x = f.x0 + (this.x - f.x0) * u, y = f.y0 + (this.y - 40 - f.y0) * u - Math.sin(u * Math.PI) * 160;
-      ctx.save(); ctx.translate(x, y); ctx.rotate(f.t * 10); drawAcorn(1.2); ctx.restore();
+      ctx.save(); ctx.translate(x, y); ctx.rotate(f.t * 10); this.item(1.2); ctx.restore();
     }
   }
 
   drawOver(w: World): void {
-    if (this.bubbleA > 0.02) drawBubble(this.x, this.y - 90, this.bubbleA, 64, () => drawAcorn(1.6));
+    if (this.bubbleA > 0.02) drawBubble(this.x, this.y - 90, this.bubbleA, 64, () => this.item(1.6));
     // acorn tally at the top of the screen
     if (w.mode === 'idle') return;
     screenSpace();
@@ -95,7 +100,7 @@ export class Squirrel implements Entity {
     for (let i = 0; i < n; i++) {
       ctx.save(); ctx.translate(cx + (i - (n - 1) / 2) * 42, y);
       ctx.globalAlpha = i < this.got ? 1 : 0.25;
-      drawAcorn(1.3);
+      this.item(1.3);
       ctx.restore();
     }
   }

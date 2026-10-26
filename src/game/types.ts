@@ -56,7 +56,7 @@ export interface Entity {
 }
 
 export interface LevelDef {
-  id: number;
+  id: string;               // 'chapter-level', e.g. '2-3'
   name: string;
   icon: string;
   theme: string;
@@ -70,6 +70,7 @@ export interface LevelDef {
   noDecorIn?: [number, number][]; // x ranges kept clear (rivers…)
   setup?(w: World): void;    // spawn entities
   hints?: boolean;           // show walk / fly hints
+  swim?: boolean;            // under water: slow sinking, swimming up never gets tired
   winText?: string;
 }
 
@@ -99,4 +100,5 @@ export interface World {
   rainbowA: number;
   hints: { walked: boolean; flew: boolean; walkA: number; flyA: number };
   time: number;              // seconds since level start
+  failed: boolean;           // a timer ran out: the level starts again
 }

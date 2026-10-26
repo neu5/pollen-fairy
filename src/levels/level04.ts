@@ -4,7 +4,7 @@ import type { LevelDef } from '../game/types';
 // Level 4: Rainy Day — grow mushroom umbrellas for three wet ladybugs.
 
 export const level04: LevelDef = {
-  id: 4,
+  id: '1-4',
   name: 'Rainy Day',
   icon: '🌧️',
   theme: 'rain',

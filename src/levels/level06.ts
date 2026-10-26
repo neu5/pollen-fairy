@@ -10,7 +10,7 @@ const PA = 1180, PB = 2480, SURFACE = 620;
 const sstep = (a: number, b: number, x: number) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
 
 export const level06: LevelDef = {
-  id: 6,
+  id: '1-6',
   name: 'Frog Pond',
   icon: '🐸',
   theme: 'pond',

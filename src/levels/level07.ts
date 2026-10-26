@@ -4,7 +4,7 @@ import type { LevelDef } from '../game/types';
 // Level 7: Grey Garden — carry the right paint to each grey flower to bring the colours back.
 
 export const level07: LevelDef = {
-  id: 7,
+  id: '1-7',
   name: 'Grey Garden',
   icon: '🎨',
   theme: 'grey',

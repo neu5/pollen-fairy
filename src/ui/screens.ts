@@ -1,4 +1,4 @@
-import { LEVELS } from '../levels';
+import { CHAPTERS, type Chapter } from '../levels';
 import { Save, type Profile } from '../save';
 import { paintFairy } from './wardrobe';
 import { t, type Key } from '../i18n';
@@ -6,7 +6,7 @@ import { t, type Key } from '../i18n';
 // DOM screens: title, who's playing, new kid, confirm, level map, end card.
 
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
-const SCREENS = ['title', 'who', 'newkid', 'wardrobe', 'confirm', 'map', 'pause', 'end'] as const;
+const SCREENS = ['title', 'who', 'newkid', 'wardrobe', 'confirm', 'chapters', 'map', 'intro', 'pause', 'again', 'end'] as const;
 export type ScreenId = typeof SCREENS[number] | 'level';
 
 export function show(id: ScreenId): void {
@@ -41,7 +41,7 @@ export function renderWho(h: WhoHandlers): void {
     const btn = el('button', 'kid-btn');
     btn.setAttribute('aria-label', t('a.playAs', { name: p.name }));
     btn.append(avatar(p), el('span', 'kid-name', p.name));
-    const stars = Object.values(p.levels).reduce((s, l) => s + l.stars, 0);
+    const stars = Save.stars(p);
     btn.append(el('span', 'kid-stars', `★ ${stars}`));
     btn.onclick = () => h.pick(p);
     const del = el('button', 'kid-del', '✕');
@@ -99,7 +99,26 @@ function pathD(pts: number[][]): string {
   return d;
 }
 
-export function renderMap(p: Profile, play: (id: number) => void, back: () => void, dress: () => void): void {
+// Chapter picker: one big card per chapter, with stars and a lock.
+export function renderChapters(p: Profile, pick: (c: Chapter) => void, back: () => void): void {
+  $('chaptersBack').onclick = back;
+  const box = $('chapterCards');
+  box.replaceChildren();
+  for (const ch of CHAPTERS) {
+    const built = ch.levels.some(l => l.def);
+    const open = built && Save.chapterOpen(p, ch.id);
+    const b = el('button', 'chapter' + (open ? '' : ' locked'));
+    b.style.setProperty('--c', ch.color);
+    b.setAttribute('aria-label', `${t('a.chapter', { n: ch.id })}: ${t(`ch${ch.id}` as Key)}${open ? '' : ' ' + t('a.locked')}`);
+    b.append(el('span', 'num', String(ch.id)), el('span', 'icon', open ? ch.icon : '🔒'), el('span', 'name', t(`ch${ch.id}` as Key)));
+    if (open) b.append(el('span', 'kid-stars', `★ ${Save.stars(p, ch.id)} / ${ch.levels.length * 3}`));
+    b.disabled = !open;
+    if (open) b.onclick = () => pick(ch);
+    box.append(b);
+  }
+}
+
+export function renderMap(p: Profile, ch: Chapter, play: (key: string) => void, back: () => void, dress: () => void): void {
   // tall phone screens get the same path turned on its side
   const tall = window.innerHeight > window.innerWidth;
   const W = tall ? 560 : 1000, H = tall ? 1000 : 560;
@@ -108,6 +127,8 @@ export function renderMap(p: Profile, play: (id: number) => void, back: () => vo
   $('map').classList.toggle('tall', tall);
   $('mapSvg').setAttribute('viewBox', `0 0 ${W} ${H}`);
   $('mapName').textContent = p.name;
+  $('mapTitle').textContent = `${ch.icon} ${t(`ch${ch.id}` as Key)}`;
+  $('map').style.setProperty('--chapter', ch.color);
   $('mapPath').setAttribute('d', pathD(pts));
   $('mapBack').onclick = back;
   $('mapDress').onclick = dress;
@@ -116,29 +137,49 @@ export function renderMap(p: Profile, play: (id: number) => void, back: () => vo
   const box = $('stones');
   box.replaceChildren();
   let current = 1;
-  for (const slot of LEVELS) if (Save.isOpen(p, slot.id) && slot.def) current = slot.id;
-  LEVELS.forEach((slot, i) => {
-    const res = p.levels[slot.id];
-    const open = Save.isOpen(p, slot.id) && !!slot.def;
+  for (const slot of ch.levels) if (Save.isOpen(p, ch.id, slot.n) && slot.def) current = slot.n;
+  ch.levels.forEach((slot, i) => {
+    const res = p.levels[slot.key];
+    const open = Save.isOpen(p, ch.id, slot.n) && !!slot.def;
     const b = el('button', 'stone');
     Object.assign(b.style, at(i));
     b.classList.add(res?.done ? 'done' : open ? 'open' : slot.def ? 'locked' : 'soon');
-    if (slot.id === current && !res?.done) b.classList.add('next');
-    b.setAttribute('aria-label', `${slot.id}. ${t(`l${slot.id}` as Key)}${open ? '' : ' ' + t('a.locked')}`);
-    b.append(el('span', 'num', String(slot.id)), el('span', 'icon', open || res?.done ? slot.icon : '🔒'));
+    if (slot.n === current && !res?.done) b.classList.add('next');
+    b.setAttribute('aria-label', `${slot.n}. ${t(`l${slot.key}` as Key)}${open ? '' : ' ' + t('a.locked')}`);
+    b.append(el('span', 'num', String(slot.n)), el('span', 'icon', open || res?.done ? slot.icon : '🔒'));
     if (res?.done) {
       const s = el('span', 'stars');
       for (let k = 0; k < 3; k++) s.append(el('i', k < res.stars ? 'on' : '', '★'));
       b.append(s);
     }
     b.disabled = !open;
-    if (open) b.onclick = () => play(slot.id);
+    if (open) b.onclick = () => play(slot.key);
     box.append(b);
   });
   // fairy marker above the current stone
   const m = $('mapMarker');
   Object.assign(m.style, at(current - 1));
   show('map');
+}
+
+// What to do in a level: picture steps with arrows between, and one short sentence.
+const JOINERS = new Set(['➡️', '➕', '=', '…']);
+export function renderGoal(box: HTMLElement, goal: { steps: string[]; text: string } | null): void {
+  box.replaceChildren();
+  if (!goal) return;
+  const row = el('div', 'goal-steps');
+  goal.steps.forEach((st, i) => {
+    if (i > 0 && !JOINERS.has(st) && !JOINERS.has(goal.steps[i - 1])) row.append(el('span', 'goal-arrow', '›'));
+    row.append(el('span', JOINERS.has(st) ? 'goal-join' : 'goal-step', st));
+  });
+  box.append(row, el('p', 'goal-text', goal.text));
+}
+
+export function showIntro(title: string, goal: { steps: string[]; text: string } | null, go: () => void): void {
+  $('introTitle').textContent = title;
+  renderGoal($('introGoal'), goal);
+  $('introGo').onclick = go;
+  show('intro');
 }
 
 export interface EndHandlers { map(): void; replay(): void; next: (() => void) | null }

@@ -3,7 +3,7 @@ import { glow } from '../engine/fx';
 import { TAU, mulberry32, mod, pick, sprite, drawSprite, circle, type Sprite } from '../util';
 import {
   CASTLE_PAL, drawRoundTree, drawPine, drawTallTree, drawBush, drawFern, drawCloud, drawCastle,
-  drawGrassClump, drawBigLeaf, drawHangingVine, drawStalagmite, drawStalactites,
+  drawGrassClump, drawBigLeaf, drawHangingVine, drawStalagmite, drawStalactites, drawSeaweed,
 } from '../art';
 import type { Theme } from '../themes';
 
@@ -84,12 +84,12 @@ function buildBackdrop(t: Theme): Backdrop {
   const far: Sprite[] = [];
   for (let i = 0; i < 9; i++) {
     const p = t.far[i % t.far.length], pine = i % 3 === 2;
-    far.push(sprite(130, 210, 0.45, 1.6, g => (t.rocks ? drawStalagmite : pine ? drawPine : drawRoundTree)(g, 130, 210, p, R)));
+    far.push(sprite(130, 210, 0.45, 1.6, g => (t.seaweed ? drawSeaweed : t.rocks ? drawStalagmite : pine ? drawPine : drawRoundTree)(g, 130, 210, p, R)));
   }
   const mid: Sprite[] = [];
   for (let i = 0; i < 10; i++) {
     const pine = i % 4 === 3, p = pine ? t.mid[Math.min(2, t.mid.length - 1)] : t.mid[i % t.mid.length];
-    mid.push(sprite(230, 400, 0.6, 0.9, g => (t.rocks ? drawStalagmite : pine ? drawPine : drawRoundTree)(g, 230, 400, p, R)));
+    mid.push(sprite(230, 400, 0.6, 0.9, g => (t.seaweed ? drawSeaweed : t.rocks ? drawStalagmite : pine ? drawPine : drawRoundTree)(g, 230, 400, p, R)));
   }
   const near = [0, 1, 2].map(i => sprite(360, 1000, 0.6, 0.5, g => drawTallTree(g, 360, 1000, t.near[i % t.near.length], R)));
   const bush = [0, 1, 2, 3, 4].map(i => sprite(200, 110, 0.7, 0.4, g => drawBush(g, 200, 110, t.bushBack, R, i % 2 === 0)));
@@ -97,10 +97,10 @@ function buildBackdrop(t: Theme): Backdrop {
   const fern = [0, 1].map(() => sprite(200, 120, 1, 0, g => drawFern(g, 200, 120, t.fern, R)));
   const fgGrass = [0, 1, 2].map(() => sprite(320, 180, 0.3, 4, g => drawGrassClump(g, 320, 180, t.fg, R)));
   const fgLeaf = [0, 1].map(() => sprite(320, 240, 0.3, 4, g => drawBigLeaf(g, 320, 240, t.fgLeaf, R)));
-  const hang = [0, 1].map(() => t.rocks
+  const hang = [0, 1].map(() => t.ceiling
     ? sprite(420, 260, 0.35, 3, g => drawStalactites(g, 420, 260, t.hang, R))
     : sprite(150, 320, 0.3, 4, g => drawHangingVine(g, 150, 320, t.hang, R)));
-  const backCeil = t.rocks ? [0, 1].map(() => sprite(420, 300, 0.4, 1.5, g => drawStalactites(g, 420, 300, t.range2[0], R))) : [];
+  const backCeil = t.ceiling ? [0, 1].map(() => sprite(420, 300, 0.4, 1.5, g => drawStalactites(g, 420, 300, t.range2[0], R))) : [];
 
   const L = {
     clouds: Array.from({ length: 9 }, (_, i) => ({ x: i * 380 + R() * 200, y: 30 + R() * 230, s: pick(R, clouds), k: 0.6 + R() * 0.8, drift: 5 + R() * 8 })),
@@ -109,8 +109,8 @@ function buildBackdrop(t: Theme): Backdrop {
     near: scatter(0.8, 760, x => ({ x, y: 690, s: pick(R, near), k: 0.85 + R() * 0.25 })),
     back: scatter(0.9, 110, x => ({ x, y: backHillY(x) + 22, s: pick(R, bush), k: 0.6 + R() * 0.6 })),
     fg: scatter(1.35, 520, x => ({ x, y: 772, s: R() < 0.6 ? pick(R, fgGrass) : pick(R, fgLeaf), k: 0.5 + R() * 0.35 })),
-    hang: scatter(1.25, t.rocks ? 330 : 1400, x => ({ x, y: 0, s: pick(R, hang), k: 0.7 + R() * 0.4, ay: 0 })),
-    ceil: t.rocks ? scatter(0.4, 300, x => ({ x, y: 0, s: pick(R, backCeil), k: 0.8 + R() * 0.5, ay: 0 })) : [],
+    hang: scatter(1.25, t.ceiling ? 330 : 1400, x => ({ x, y: 0, s: pick(R, hang), k: 0.7 + R() * 0.4, ay: 0 })),
+    ceil: t.ceiling ? scatter(0.4, 300, x => ({ x, y: 0, s: pick(R, backCeil), k: 0.8 + R() * 0.5, ay: 0 })) : [],
     butterflies: Array.from({ length: 12 }, () => ({
       x: R() * (MAX_W * 0.75 + 2000), y: 250 + R() * 220, ph: R() * TAU, s: 0.7 + R() * 0.5,
       col: pick(R, ['#ffb3d9', '#ffe08a', '#b8a6ff', '#9fe3ff', '#ffc39e']),
@@ -189,7 +189,7 @@ function buildBackdrop(t: Theme): Backdrop {
     for (let i = 0; i < 6; i++) {
       const a = 1.95 + i * 0.13 + Math.sin(V.time * 0.07 + i) * 0.03;
       const len = 1600, w0 = 8, w1 = 60 + (i % 3) * 45;
-      const alpha = (0.05 + 0.035 * Math.sin(V.time * 0.35 + i * 1.7)) * t.rays;
+      const alpha = (0.05 + 0.035 * Math.sin(V.time * 0.35 + i * 1.7)) * t.rays * 0.6;
       const dx = Math.cos(a), dy = Math.sin(a), nx = -dy, ny = dx;
       const g = ctx.createLinearGradient(ox, oy, ox + dx * len, oy + dy * len);
       g.addColorStop(0, `rgba(255,246,210,${alpha * 1.6})`);
@@ -230,9 +230,9 @@ function buildBackdrop(t: Theme): Backdrop {
     ctx.save(); ctx.globalCompositeOperation = 'lighter';
     const wx = V.viewW + 80, wy = V.viewH + 80, firefly = t.weather === 'fireflies';
     for (const m of L.motes) {
-      const wander = firefly ? Math.sin(V.time * 0.7 + m.ph * 3) * 40 : 0;
-      const x = mod(m.x - V.camX * 1.1 + V.time * m.sp + wander, wx) - 40;
-      const y = mod(m.y - (V.camY - V.camRest) * 1.1 + Math.sin(V.time * 0.5 + m.ph) * 20, wy) - 40;
+      const wander = firefly ? Math.sin(V.time * 0.7 + m.ph * 3) * 40 : 0, bubble = t.weather === 'bubbles';
+      const x = mod(m.x - V.camX * 1.1 + (bubble ? Math.sin(V.time + m.ph) * 8 : V.time * m.sp) + wander, wx) - 40;
+      const y = mod(m.y - (V.camY - V.camRest) * 1.1 + (bubble ? -V.time * m.sp * 6 : Math.sin(V.time * 0.5 + m.ph) * 20), wy) - 40;
       const a = firefly ? Math.max(0, Math.sin(V.time * 1.1 + m.ph * 5)) : 0.35 + 0.35 * Math.sin(V.time * 1.3 + m.ph);
       glow(x, y, m.r * (firefly ? 9 : 5), `rgba(${t.motes},A)`, a * 0.6);
       ctx.fillStyle = `rgba(${t.motes},${a})`; circle(ctx, x, y, m.r);
@@ -264,6 +264,31 @@ function buildBackdrop(t: Theme): Backdrop {
       const r = V.time * 2 + f.ph;
       ctx.save(); ctx.translate(x, y); ctx.rotate(r); ctx.scale(1, Math.abs(Math.cos(r * 0.7)) * 0.8 + 0.2);
       ctx.fillStyle = f.c; ctx.beginPath(); ctx.ellipse(0, 0, f.s, f.s * 0.55, 0, 0, TAU); ctx.fill();
+      ctx.restore();
+    }
+  }
+
+  const flakes = Array.from({ length: 90 }, () => ({ x: R() * 2000, y: R() * 1000, sp: 30 + R() * 40, r: 1.5 + R() * 2.5, ph: R() * TAU }));
+  function drawSnow(): void {
+    screenSpace();
+    ctx.fillStyle = 'rgba(255,255,255,0.9)';
+    const wx = V.viewW + 60, wy = V.viewH + 60;
+    for (const f of flakes) {
+      const x = mod(f.x - V.camX * 1.1 + Math.sin(V.time * 0.7 + f.ph) * 30, wx) - 30;
+      const y = mod(f.y + V.time * f.sp - (V.camY - V.camRest), wy) - 30;
+      circle(ctx, x, y, f.r);
+    }
+  }
+  function drawPetals(): void {
+    screenSpace();
+    const wx = V.viewW + 60, wy = V.viewH + 60;
+    for (let i = 0; i < 30; i++) {
+      const f = flakes[i];
+      const x = mod(f.x - V.camX * 1.15 + Math.sin(V.time * 0.8 + f.ph) * 50 + V.time * 12, wx) - 30;
+      const y = mod(f.y + V.time * f.sp * 0.8 - (V.camY - V.camRest), wy) - 30;
+      const r = V.time * 2 + f.ph;
+      ctx.save(); ctx.translate(x, y); ctx.rotate(r); ctx.scale(1, Math.abs(Math.cos(r * 0.7)) * 0.7 + 0.3);
+      ctx.fillStyle = i % 3 ? '#ffc8dc' : '#ffffff'; ctx.beginPath(); ctx.ellipse(0, 0, 5, 3, 0, 0, TAU); ctx.fill();
       ctx.restore();
     }
   }
@@ -301,6 +326,8 @@ function buildBackdrop(t: Theme): Backdrop {
     drawFront() {
       if (t.weather === 'rain') drawRain();
       if (t.weather === 'leaves') drawLeaves();
+      if (t.weather === 'snow') drawSnow();
+      if (t.weather === 'petals') drawPetals();
       drawItems(L.fg, 1.35, 1.15);
       drawItems(L.hang, 1.25, 0, V.camRest - 20); // pinned to screen top
     },

@@ -383,7 +383,7 @@ kbd {
   position: fixed; top: 18px; left: 18px; z-index: 6; display: none; gap: 8px; padding: 7px;
   background: rgba(255, 255, 255, 0.75); border-radius: 999px; box-shadow: 0 5px 16px rgba(90, 60, 140, 0.2);
 }
-body[data-screen="title"] .langs, body[data-screen="who"] .langs, body[data-screen="newkid"] .langs { display: flex; }
+body[data-screen="title"] .langs, body[data-screen="who"] .langs, body[data-screen="chapters"] .langs, body[data-screen="newkid"] .langs { display: flex; }
 .langs button {
   width: 52px; height: 40px; padding: 5px; border: 0; border-radius: 14px; background: transparent;
   opacity: 0.55; transition: opacity 0.15s, transform 0.15s;
@@ -394,3 +394,91 @@ body[data-screen="title"] .langs, body[data-screen="who"] .langs, body[data-scre
 /* no double-tap zoom on phones (buttons still respond right away) */
 *, *::before, *::after { touch-action: manipulation; }
 html, body, #game, .tbtn { touch-action: none; }
+
+/* ---------- chapter picker ---------- */
+#chapters { background: radial-gradient(ellipse at 50% 50%, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.15) 70%); justify-content: flex-start; padding-top: 18px; }
+#chapters .map-top { justify-content: flex-end; padding-right: 90px; }
+.chapters { display: flex; flex-wrap: wrap; gap: 18px; justify-content: center; max-width: 980px; margin: auto 0; }
+.chapter {
+  --c: #ffd166; position: relative; width: 168px; padding: 20px 10px 16px; border: 0; border-radius: 34px;
+  background: radial-gradient(circle at 50% 30%, #fff, color-mix(in srgb, var(--c) 45%, #fff) 80%);
+  box-shadow: 0 8px 0 color-mix(in srgb, var(--c) 70%, #8a6ac0), 0 14px 30px rgba(90, 60, 140, 0.18);
+  display: flex; flex-direction: column; align-items: center; gap: 6px; transition: transform 0.15s;
+}
+.chapter:hover { transform: translateY(-4px) rotate(-1deg); }
+.chapter .icon { font-size: 58px; line-height: 1.1; }
+.chapter .name { font-size: 20px; font-weight: 700; color: var(--ink); line-height: 1.1; }
+.chapter .num {
+  position: absolute; top: -8px; left: -8px; width: 36px; height: 36px; border-radius: 50%;
+  background: #6a4bb0; color: #fff; font-size: 18px; font-weight: 700; display: grid; place-items: center;
+}
+.chapter.locked { filter: grayscale(0.8); opacity: 0.7; cursor: default; }
+.chapter.locked:hover { transform: none; }
+.map-title {
+  margin-left: auto; align-self: center; background: rgba(255, 255, 255, 0.85); color: var(--ink);
+  font-size: 22px; font-weight: 700; padding: 6px 18px; border-radius: 999px; box-shadow: 0 4px 12px rgba(90, 60, 140, 0.15);
+}
+#map .map-top { padding-right: 90px; }
+.map-path path { stroke: color-mix(in srgb, var(--chapter, #fff) 35%, #fff); }
+@media (max-aspect-ratio: 1/1) { .chapter { width: 140px; } .chapter .icon { font-size: 46px; } .map-title { font-size: 17px; } }
+
+/* ---------- clock puzzle ---------- */
+#clock { background: rgba(60, 40, 110, 0.35); z-index: 8; }
+.clock-card { position: relative; gap: 12px; padding: 22px 30px 26px; max-width: 560px; }
+.clock-card .kid-del { top: 10px; right: 10px; left: auto; }
+.clock-goal { display: flex; align-items: center; gap: 12px; background: #fff4cc; padding: 6px 18px 6px 8px; border-radius: 999px; box-shadow: 0 4px 0 #f0b850; }
+.clock-mini { width: 54px; height: 54px; }
+.clock-digits { font-size: 44px; font-weight: 700; color: #5b3a8c; letter-spacing: 2px; }
+.clock-face { width: min(300px, 62vw, 42vh); height: min(300px, 62vw, 42vh); filter: drop-shadow(0 8px 14px rgba(90, 60, 140, 0.25)); }
+.clock-face.ok { animation: pop 0.6s cubic-bezier(0.2, 1.8, 0.4, 1); filter: drop-shadow(0 0 24px #ffe27a); }
+.clock-face.no { animation: shake 0.4s; }
+.clock-buttons { display: flex; gap: 22px; flex-wrap: wrap; justify-content: center; }
+.clock-pair { display: flex; align-items: center; gap: 8px; }
+.clock-pair .pill { font-size: 30px; min-width: 70px; height: 64px; }
+.clock-pair.short .pill { min-width: 58px; height: 54px; font-size: 24px; }
+.hand-icon { display: block; width: 10px; border-radius: 6px; }
+.hand-icon.long { height: 46px; background: #ff6fa8; }
+.hand-icon.short { height: 28px; width: 13px; background: #5b3a8c; }
+@keyframes shake { 20%, 60% { translate: -10px 0; } 40%, 80% { translate: 10px 0; } }
+
+/* ---------- timer + try again ---------- */
+#again { background: rgba(60, 40, 110, 0.25); z-index: 8; }
+.again-icon { font-size: 64px; }
+.clock-pair .pill svg { width: 34px; height: 34px; }
+.clock-pair.short .pill svg { width: 26px; height: 26px; }
+
+/* ---------- number picker ---------- */
+#numbers { background: rgba(60, 40, 110, 0.35); z-index: 8; }
+.numbers-card { position: relative; max-width: 620px; gap: 16px; padding: 24px 26px; }
+.numbers-card .kid-del { top: 10px; right: 10px; left: auto; }
+.numbers-ask { font-size: clamp(30px, 6vw, 46px); font-weight: 700; color: #5b3a8c; display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; justify-content: center; line-height: 1.1; }
+.numbers-ask .group { display: inline-flex; flex-wrap: wrap; gap: 8px; max-width: 220px; justify-content: center; background: #fff4cc; padding: 6px 10px; border-radius: 18px; }
+.numbers-pad { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+.numbers-pad button {
+  width: clamp(54px, 13vw, 84px); height: clamp(64px, 15vw, 96px); border: 0; border-radius: 22px; background: #f3ecff; box-shadow: 0 5px 0 #c9b8f0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font: inherit; font-size: clamp(26px, 6vw, 38px); font-weight: 700; color: #5b3a8c;
+}
+.numbers-pad button:active { translate: 0 4px; box-shadow: 0 1px 0 #c9b8f0; }
+.numbers-pad .dots { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px; max-width: 46px; }
+.numbers-pad .dots i { width: 6px; height: 6px; border-radius: 50%; background: #ffb43a; }
+.numbers-pad button.no { animation: shake 0.4s; background: #ffd6e4; }
+.numbers-pad button.hint { box-shadow: 0 5px 0 #f0b850, 0 0 0 4px #ffcf3a inset; background: #fff4cc; }
+.numbers-pad button.yes { background: #c8f5c8; box-shadow: 0 5px 0 #7ed08a; }
+
+/* ---------- level goal ---------- */
+#intro { background: rgba(60, 40, 110, 0.3); }
+.goal-card { max-width: 640px; gap: 16px; }
+.card .goal-title { margin: 0; font-size: clamp(30px, 5vw, 44px); color: #ff6fae; text-shadow: 0 3px 0 #ffd2e8; }
+.goal { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.goal-steps { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px; }
+.goal-step {
+  min-width: 64px; height: 64px; padding: 0 8px; box-sizing: border-box; border-radius: 20px; background: #fff4cc;
+  box-shadow: 0 4px 0 #f0d080; display: grid; place-items: center; font-size: 38px; font-weight: 700; color: #5b3a8c; line-height: 1;
+}
+.goal-arrow { font-size: 40px; font-weight: 700; color: #c9b8f0; margin: 0 -2px; }
+.goal-join { font-size: 34px; font-weight: 700; color: #5b3a8c; }
+.goal-text { margin: 0; font-size: clamp(18px, 2.6vw, 23px); color: var(--ink); line-height: 1.35; max-width: 540px; }
+.goal.small .goal-step { min-width: 46px; height: 46px; font-size: 26px; border-radius: 14px; }
+.goal.small .goal-arrow { font-size: 28px; }
+.goal.small .goal-text { font-size: 16px; max-width: 420px; }
+@media (max-aspect-ratio: 1/1) { .goal-step { min-width: 52px; height: 52px; font-size: 30px; } }

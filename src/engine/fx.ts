@@ -12,8 +12,12 @@ export function star(x: number, y: number, r: number, rot: number): void {
   ctx.closePath(); ctx.fill();
 }
 
+// All glows are dimmed by this much, so they never hide the fairy, flowers or friends.
+export const GLOW = 0.5;
+
 // color must contain 'A' where the alpha goes, e.g. 'rgba(255,220,120,A)'
 export function glow(x: number, y: number, r: number, color: string, a: number): void {
+  a *= GLOW;
   const g = ctx.createRadialGradient(x, y, 0, x, y, r);
   g.addColorStop(0, color.replace('A', String(a))); g.addColorStop(1, color.replace('A', '0'));
   ctx.fillStyle = g; ctx.fillRect(x - r, y - r, r * 2, r * 2);

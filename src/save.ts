@@ -9,21 +9,28 @@ export interface Profile {
   name: string;
   color: string;
   createdAt: number;
-  levels: Record<number, LevelResult>;
+  levels: Record<string, LevelResult>;   // key 'chapter-level', e.g. '2-3'
   look: Look;
 }
 interface SaveData { profiles: Profile[]; lastProfileId: string | null }
 
-const KEY = 'pf-save-v1';
+const KEY = 'pf-save-v2';
+const OLD_KEY = 'pf-save-v1';   // before chapters: levels were keyed 1..10
+const PER_CHAPTER = 10;
 const COLORS = ['#ff8fc7', '#c3aaff', '#86dcff', '#ffd166', '#8fe388', '#ffa585'];
 
 function load(): SaveData {
   try {
-    const raw = localStorage.getItem(KEY);
+    let raw = localStorage.getItem(KEY), old = false;
+    if (!raw) { raw = localStorage.getItem(OLD_KEY); old = true; }
     if (raw) {
       const d = JSON.parse(raw) as SaveData;
       if (Array.isArray(d.profiles)) {
-        for (const p of d.profiles) p.look = fixLook(p.look);
+        for (const p of d.profiles) {
+          p.look = fixLook(p.look);
+          // old saves: level 3 → '1-3' (the first 10 levels are chapter 1)
+          if (old) p.levels = Object.fromEntries(Object.entries(p.levels ?? {}).map(([k, v]) => [/^\d+$/.test(k) ? `1-${k}` : k, v]));
+        }
         return d;
       }
     }
@@ -76,7 +83,7 @@ export const Save = {
   },
 
   // Keeps the best stars when a level is replayed.
-  finish(id: string, level: number, stars: number): void {
+  finish(id: string, level: string, stars: number): void {
     const p = this.get(id);
     if (!p) return;
     const prev = p.levels[level];
@@ -84,8 +91,20 @@ export const Save = {
     persist();
   },
 
-  // Level n is open when it is the first one or the one before is done.
-  isOpen(p: Profile, level: number): boolean {
-    return DEBUG || level === 1 || !!p.levels[level - 1]?.done;
+  // A chapter opens when every level of the chapter before it is done.
+  chapterOpen(p: Profile, chapter: number): boolean {
+    if (DEBUG || chapter === 1) return true;
+    for (let n = 1; n <= PER_CHAPTER; n++) if (!p.levels[`${chapter - 1}-${n}`]?.done) return false;
+    return true;
+  },
+
+  // Level n of a chapter is open when the chapter is open and level n-1 is done.
+  isOpen(p: Profile, chapter: number, n: number): boolean {
+    if (!this.chapterOpen(p, chapter)) return false;
+    return DEBUG || n === 1 || !!p.levels[`${chapter}-${n - 1}`]?.done;
+  },
+
+  stars(p: Profile, chapter?: number): number {
+    return Object.entries(p.levels).reduce((s, [k, l]) => s + (chapter == null || k.startsWith(`${chapter}-`) ? l.stars : 0), 0);
   },
 };

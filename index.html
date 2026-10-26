@@ -8,6 +8,12 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/src/style.css">
+  <style>
+    /* until the game script is ready, show only the sky colour (no half-styled windows) */
+    html, body { margin: 0; background: #9fd8fb; }
+    body:not(.ready) > :not(#game) { visibility: hidden; }
+  </style>
 </head>
 <body>
   <canvas id="game"></canvas>
@@ -38,6 +44,9 @@
     </button>
     <button data-lang="pl" aria-label="Polski">
       <svg viewBox="0 0 16 10" aria-hidden="true"><path d="M0 0h16v5H0z" fill="#fff"/><path d="M0 5h16v5H0z" fill="#dc143c"/></svg>
+    </button>
+    <button data-lang="fr" aria-label="Français">
+      <svg viewBox="0 0 3 2" aria-hidden="true"><path d="M0 0h1v2H0z" fill="#0055a4"/><path d="M1 0h1v2H1z" fill="#fff"/><path d="M2 0h1v2H2z" fill="#ef4135"/></svg>
     </button>
   </div>
 
@@ -96,12 +105,23 @@
     </div>
   </div>
 
+  <div id="chapters" class="overlay">
+    <div class="map-top">
+      <button id="chaptersBack" class="pill ghost" data-i18n-aria="a.changePlayer" aria-label="Change player">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7"/></svg>
+      </button>
+    </div>
+    <h2 class="screen-title" data-i18n="chapters">Choose an adventure</h2>
+    <div id="chapterCards" class="chapters"></div>
+  </div>
+
   <div id="map" class="overlay">
     <div class="map-top">
-      <button id="mapBack" class="pill ghost" data-i18n-aria="a.changePlayer" aria-label="Change player">
+      <button id="mapBack" class="pill ghost" data-i18n-aria="a.chapters" aria-label="Adventures">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7"/></svg>
       </button>
       <button id="mapDress" class="pill dress-btn" data-i18n-aria="a.dress" aria-label="Dress up">👗</button>
+      <span id="mapTitle" class="map-title"></span>
     </div>
     <div class="map-board">
       <svg id="mapSvg" class="map-path" viewBox="0 0 1000 560" preserveAspectRatio="none" aria-hidden="true">
@@ -112,9 +132,20 @@
     </div>
   </div>
 
+  <div id="intro" class="overlay">
+    <div class="card goal-card">
+      <h2 id="introTitle" class="goal-title"></h2>
+      <div id="introGoal" class="goal"></div>
+      <button id="introGo" class="big small" data-i18n-aria="a.play" aria-label="Play">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg>
+      </button>
+    </div>
+  </div>
+
   <div id="pause" class="overlay">
     <div class="card">
       <h2 data-i18n="paused">Paused</h2>
+      <div id="pauseGoal" class="goal small"></div>
       <div class="row">
         <button id="pauseMap" class="pill" data-i18n-aria="a.map" aria-label="Map">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5 3 11h2.5v8.5h5v-5h3v5h5V11H21z"/></svg>
@@ -126,6 +157,50 @@
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg>
         </button>
       </div>
+    </div>
+  </div>
+
+  <div id="clock" class="overlay">
+    <div class="card clock-card">
+      <button id="clockClose" class="kid-del" data-i18n-aria="a.close" aria-label="Close">✕</button>
+      <div class="clock-goal">
+        <svg id="clockGoalFace" class="clock-mini" aria-hidden="true"></svg>
+        <span id="clockGoal" class="clock-digits">8:00</span>
+      </div>
+      <svg id="clockFace" class="clock-face" aria-hidden="true"></svg>
+      <div class="clock-buttons">
+        <div class="clock-pair long">
+          <button id="clockMinBack" class="pill" data-i18n-aria="a.minBack" aria-label="Long hand back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5V2L7 6l5 4V7a5 5 0 1 1-5 5H5a7 7 0 1 0 7-7z"/></svg></button>
+          <span class="hand-icon long"></span>
+          <button id="clockMinFwd" class="pill" data-i18n-aria="a.minFwd" aria-label="Long hand forward"><svg viewBox="0 0 24 24" aria-hidden="true" style="transform:scaleX(-1)"><path d="M12 5V2L7 6l5 4V7a5 5 0 1 1-5 5H5a7 7 0 1 0 7-7z"/></svg></button>
+        </div>
+        <div class="clock-pair short">
+          <button id="clockHourBack" class="pill" data-i18n-aria="a.hourBack" aria-label="Short hand back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5V2L7 6l5 4V7a5 5 0 1 1-5 5H5a7 7 0 1 0 7-7z"/></svg></button>
+          <span class="hand-icon short"></span>
+          <button id="clockHourFwd" class="pill" data-i18n-aria="a.hourFwd" aria-label="Short hand forward"><svg viewBox="0 0 24 24" aria-hidden="true" style="transform:scaleX(-1)"><path d="M12 5V2L7 6l5 4V7a5 5 0 1 1-5 5H5a7 7 0 1 0 7-7z"/></svg></button>
+        </div>
+      </div>
+      <button id="clockOk" class="big small" data-i18n-aria="a.ok" aria-label="OK">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 16.2 5.3 12l-1.8 1.8 6 6L21 8.3l-1.8-1.8z"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div id="numbers" class="overlay">
+    <div class="card numbers-card">
+      <button id="numbersClose" class="kid-del" data-i18n-aria="a.close" aria-label="Close">✕</button>
+      <div id="numbersAsk" class="numbers-ask"></div>
+      <div id="numbersPad" class="numbers-pad"></div>
+    </div>
+  </div>
+
+  <div id="again" class="overlay">
+    <div class="card">
+      <div class="again-icon">⏳</div>
+      <h2 data-i18n="again">Oh! Again?</h2>
+      <button id="againGo" class="big small" data-i18n-aria="a.restart" aria-label="Start again">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5V2L7 6l5 4V7a5 5 0 1 1-5 5H5a7 7 0 1 0 7-7z"/></svg>
+      </button>
     </div>
   </div>
 

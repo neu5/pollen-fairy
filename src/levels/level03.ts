@@ -4,7 +4,7 @@ import type { LevelDef } from '../game/types';
 // Level 3: Night Garden — find the hourglass, wait for morning, the beetle moves the stone.
 
 export const level03: LevelDef = {
-  id: 3,
+  id: '1-3',
   name: 'Night Garden',
   icon: '🌙',
   theme: 'night',
