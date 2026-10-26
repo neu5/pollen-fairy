@@ -19,7 +19,7 @@ import { openWardrobe, tickWardrobe } from './ui/wardrobe';
 import { setLook } from './game/look';
 import { Modal } from './ui/modal';
 
-// Pollen Fairy — screens, game loop, level flow.
+// Helpful Fairy — screens, game loop, level flow.
 
 blockZoom();
 window.addEventListener('resize', () => { resize(); if (screen === 'map') goMap(); });
