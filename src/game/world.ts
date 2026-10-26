@@ -177,7 +177,7 @@ function spotsOf(e: unknown, w: World): Spot[] {
   const r = BIG[name] ?? 95;
   if (name === 'OwlTree' || name === 'Den') add(o.x, null, r);
   else add(o.x, o.y, r);
-  for (const list of [o.items, o.pts, o.stones]) if (Array.isArray(list)) for (const it of list) add(it?.x, it?.y, 90);
+  for (const list of [o.items, o.pts, o.stones]) if (Array.isArray(list)) for (const it of list) add(it?.x, it?.y ?? o.y, 90);
   if (Array.isArray(o.rounds)) for (const rd of o.rounds as { clouds?: { x: number; y: number }[] }[]) for (const c of rd.clouds ?? []) add(c.x, c.y, 100);
   if (o.pl && typeof o.pl === 'object') { const pl = o.pl as { x: number; w: number }; add(pl.x + pl.w / 2, null, pl.w / 2 + 50); }
   if (o.bridge && typeof o.bridge === 'object') { const b = o.bridge as { x: number; w: number; x0?: number }; if (typeof b.x0 !== 'number') add(b.x + b.w / 2, null, b.w / 2 + 40); }
@@ -203,12 +203,14 @@ function spaceFlowers(w: World): void {
     }
     // no room on its platform: put it on the ground nearby instead
     if (!placed && f.on) {
-      const base = f.on.x + f.on.w / 2;
+      const on = f.on, base = on.x + on.w / 2;
       f.on = null;
       for (let step = 0; step <= 1200; step += 40) {
         const x = base + (step / 40 % 2 ? -1 : 1) * step;
         if (x > 120 && x < w.worldW - 120 && free(f, x) && others(f, x)) { f.x = x; f.by = w.ground(x) + 2; placed = true; break; }
       }
+      // nowhere free: better to stay on its platform than float in the air
+      if (!placed) f.on = on;
     }
   }
 }
