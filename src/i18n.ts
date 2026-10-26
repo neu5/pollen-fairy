@@ -4,7 +4,7 @@ export type Lang = 'en' | 'pl' | 'fr';
 export const LANGS: Lang[] = ['en', 'pl', 'fr'];
 
 const en = {
-  'title.a': 'Pollen', 'title.b': 'Fairy', 'doc.title': 'Pollen Fairy',
+  'title.a': 'Helpful', 'title.b': 'Fairy', 'doc.title': 'Helpful Fairy',
   'tag': 'Wake up the sleepy flowers!',
   'keys.walk': 'walk', 'keys.space': 'Space', 'keys.fly': 'hold to fly', 'key.space': 'SPACE',
   'who': 'Who is playing?', 'ask.name': "What is the fairy's name?",
@@ -58,7 +58,7 @@ const en = {
 export type Key = keyof typeof en;
 
 const pl: Record<Key, string> = {
-  'title.a': 'Pyłkowa', 'title.b': 'Wróżka', 'doc.title': 'Pyłkowa Wróżka',
+  'title.a': 'Pomocna', 'title.b': 'Wróżka', 'doc.title': 'Pomocna Wróżka',
   'tag': 'Obudź śpiące kwiatki!',
   'keys.walk': 'chodź', 'keys.space': 'Spacja', 'keys.fly': 'przytrzymaj, by latać', 'key.space': 'SPACJA',
   'who': 'Kto gra?', 'ask.name': 'Jak wróżka ma na imię?',
@@ -108,7 +108,7 @@ const pl: Record<Key, string> = {
 };
 
 const fr: Record<Key, string> = {
-  'title.a': 'Fée', 'title.b': 'Pollen', 'doc.title': 'Fée Pollen',
+  'title.a': 'Fée', 'title.b': 'Serviable', 'doc.title': 'Fée Serviable',
   'tag': 'Réveille les fleurs endormies !',
   'keys.walk': 'marcher', 'keys.space': 'Espace', 'keys.fly': 'maintiens pour voler', 'key.space': 'ESPACE',
   'who': 'Qui joue ?', 'ask.name': 'Comment s’appelle la fée ?',
