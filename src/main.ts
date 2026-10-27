@@ -3,7 +3,7 @@ import { bindInput, releaseAll } from './engine/input';
 import { clearFx, spawnConfetti, updateFx } from './engine/fx';
 import { clamp, damp } from './util';
 import { Sound } from './sound';
-import { DEBUG } from './debug';
+import { DEBUG, fast } from './debug';
 import { blockZoom } from './engine/noZoom';
 import { applyDom, onLangChange, setLang, t, type Key, type Lang } from './i18n';
 import { createWorld, starsFor } from './game/world';
@@ -164,6 +164,7 @@ bindInput(code => {
   else if (screen === 'pause' && (code === 'Enter' || code === 'Space')) resume();
   else if (screen === 'again' && code === 'Enter') startLevel(world.def.id);
   else if (screen === 'intro' && (code === 'Enter' || code === 'Space')) setScreen('level');
+  if (DEBUG && code === 'KeyF') { fast.on = !fast.on; showDebugTag(); }
   if (!DEBUG || !profile) return;
   // debug keys: N = finish this level now, 1…9 / 0 = jump to level 1…10 of this chapter, C = next chapter
   if (code === 'KeyN' && screen === 'level' && world.mode === 'play') debugWin();
@@ -178,12 +179,11 @@ function debugWin(): void {
   world.mode = 'finale'; world.finaleT = 0;
 }
 
-if (DEBUG) {
-  const tag = document.createElement('div');
-  tag.className = 'debug-tag';
-  tag.textContent = 'DEBUG · N = win · 1-0 = level · C = chapter (map)';
-  document.body.append(tag);
+const debugTag = DEBUG ? document.createElement('div') : null;
+function showDebugTag(): void {
+  if (debugTag) debugTag.textContent = `DEBUG · N = win · 1-0 = level · C = chapter (map) · F = fast ${fast.on ? 'ON' : 'off'}`;
 }
+if (debugTag) { debugTag.className = 'debug-tag'; showDebugTag(); document.body.append(debugTag); }
 
 // --------------------------------------------------------------- loop ----
 function update(dt: number): void {

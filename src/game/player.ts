@@ -7,6 +7,7 @@ import { flowerHead } from './world';
 import type { Flower, World } from './types';
 import { drawFigure } from './fairyArt';
 import { getLook } from './look';
+import { fast } from '../debug';
 
 function visit(w: World, f: Flower, hp: { x: number; y: number }): void {
   f.visited = true; f.openV += 5; f.wiggle = 1;
@@ -42,7 +43,7 @@ export function updatePlayer(w: World, dt: number): void {
   const control = w.mode === 'play';
   const dir = control ? (input.right ? 1 : 0) - (input.left ? 1 : 0) : 0;
   if (dir) p.face = dir;
-  p.vx = damp(p.vx, dir * (p.grounded ? 200 : 240), p.grounded ? 9 : 3.5, dt);
+  p.vx = damp(p.vx, dir * (p.grounded ? 200 : 240) * (fast.on ? 2 : 1), p.grounded ? 9 : 3.5, dt);
 
   const fly = control && input.fly;
   if (fly && !p.flyHeld && p.grounded) {
