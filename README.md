@@ -19,6 +19,6 @@ npm run dev:debug    # all levels unlocked + debug keys
 npm run build        # typecheck + production build to dist/
 ```
 
-Debug keys: `N` win level, `1`–`0` jump to level, `C` next chapter (on the map), `F` toggle 2x fast fairy.
+Debug keys: `N` win level, `1`–`0` jump to level, `C` next chapter (on the map), `F` toggle 4x fast fairy.
 
 Stack: TypeScript, Vite, Canvas 2D. No runtime dependencies. Deployed on Render as a static site (`render.yaml`).
