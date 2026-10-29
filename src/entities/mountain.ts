@@ -123,6 +123,7 @@ export class Scale implements Entity {
   z = 0;
   right: number[] = [];
   holding: Stone | null = null;
+  dropped: Stone | null = null;   // just put down: don't pick it up again until the fairy walks away
   wasNearR = false;
   tilt = 0;
   done = false;
@@ -137,7 +138,8 @@ export class Scale implements Entity {
     this.tilt += (-diff - this.tilt) * Math.min(1, dt * 4);
     if (this.done) return;
     // pick up a stone lying around
-    if (!this.holding) for (const s of this.stones) if (!s.on && playerNear(w, s.x, s.y, 50)) { this.holding = s; s.on = true; Sound.happy(); }
+    if (this.dropped && !playerNear(w, this.dropped.x, this.dropped.y, 50)) this.dropped = null;
+    if (!this.holding) for (const s of this.stones) if (!s.on && s !== this.dropped && playerNear(w, s.x, s.y, 50)) { this.holding = s; s.on = true; Sound.happy(); }
     const pans = this.pans(w);
     const nearR = w.mode === 'play' && playerNear(w, pans.r.x, pans.r.y - 20, 80);
     if (nearR && !this.wasNearR) {
@@ -151,6 +153,12 @@ export class Scale implements Entity {
     this.wasNearR = nearR;
   }
   private isHeld(s: Stone) { return s === this.holding; }
+  carrying(): boolean { return !this.done && !!this.holding; }
+  drop(): void {
+    if (!this.holding) return;
+    this.holding.on = false; this.dropped = this.holding; this.holding = null;
+    Sound.tick();
+  }
   private drawStone(x: number, y: number, wgt: number): void {
     const r = 10 + wgt * 5;
     ctx.fillStyle = '#9a96a8'; ctx.beginPath(); ctx.ellipse(x, y - r * 0.8, r, r * 0.8, 0, 0, TAU); ctx.fill();

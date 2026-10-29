@@ -158,7 +158,18 @@ const syncMute = () => muteBtn.classList.toggle('off', Sound.muted);
 syncMute();
 muteBtn.addEventListener('click', () => { Sound.init(); Sound.setMuted(!Sound.muted); syncMute(); muteBtn.blur(); });
 
+// Drop (button, ↓ / S / X): whatever the fairy carries goes back where it came from.
+const dropBtn = $('drop');
+let dropShown = false;
+function dropAll(): void {
+  if (screen !== 'level' || world.mode !== 'play' || Modal.open) return;
+  for (const e of world.entities) if (e.carrying?.()) e.drop?.(world);
+}
+dropBtn.addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); dropAll(); });
+dropBtn.addEventListener('contextmenu', e => e.preventDefault());
+
 bindInput(code => {
+  if (code === 'ArrowDown' || code === 'KeyS' || code === 'KeyX') dropAll();
   if (screen === 'title' && (code === 'Enter' || code === 'Space')) { Sound.init(); goWho(); }
   if (code === 'Escape' || code === 'KeyP') { if (screen === 'level') pause(); else if (screen === 'pause') resume(); }
   else if (screen === 'pause' && (code === 'Enter' || code === 'Space')) resume();
@@ -194,6 +205,8 @@ function update(dt: number): void {
   updatePlayer(w, dt);
   if (w.mode === 'idle') w.player.wingT += dt * 2.5;
   for (const e of w.entities) e.update(w, dt);
+  const carrying = screen === 'level' && w.mode === 'play' && w.entities.some(e => e.carrying?.());
+  if (carrying !== dropShown) { dropShown = carrying; dropBtn.classList.toggle('show', carrying); }
   // a timer ran out: no fuss, just offer to start again
   if (w.failed && screen === 'level') { releaseAll(); setScreen('again'); return; }
 
