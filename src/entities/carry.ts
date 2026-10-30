@@ -9,17 +9,25 @@ import type { Entity, World } from '../game/types';
 
 // Carry one thing at a time: touch it to pick it up, touch the right place to drop it.
 // A wrong place gives a little "no" and you keep holding the thing.
+// Drop (button / ↓ key) sends the thing back to where it was found.
 
 export interface Thing { kind: string; draw(): void } // drawn around (0,0), about 40 px
 
 export class Hand implements Entity {
   z = 1;
   holding: Thing | null = null;
+  from: Pickup | null = null;
   trail = new Trail(14, -72);
   update(w: World, dt: number): void { this.trail.update(w, dt); }
-  take(t: Thing, w: World): void {
+  take(t: Thing, w: World, from: Pickup | null = null): void {
     if (!this.holding) this.trail.reset(w.player.x, w.player.y - 72);
-    this.holding = t;
+    this.holding = t; this.from = from;
+  }
+  carrying(): boolean { return !!this.holding; }
+  drop(): void {
+    if (this.from && this.from.thing === this.holding) this.from.flyBack(this.trail.x, this.trail.y);
+    this.holding = null; this.from = null;
+    Sound.tick();
   }
   draw(): void {
     if (!this.holding) return;
@@ -35,18 +43,35 @@ export class Pickup implements Entity {
   z = 0;
   taken = false;
   wasNear = false;
+  back = 1;                 // 0 → 1 while flying back after a drop
+  bx = 0; by = 0;
   constructor(public x: number, public y: number, public thing: Thing, public hand: Hand) {}
-  update(w: World): void {
+  flyBack(x: number, y: number): void { this.taken = false; this.back = 0; this.bx = x; this.by = y; }
+  update(w: World, dt: number): void {
     if (this.taken) return;
     const near = w.mode === 'play' && playerNear(w, this.x, this.y, 60);
+    if (this.back < 1) {
+      this.back = Math.min(1, this.back + dt * 1.6);
+      if (this.back === 1) sparkleBurst(this.x, this.y, 8);
+      this.wasNear = near;
+      return;
+    }
     if (near && !this.wasNear && !this.hand.holding) {
-      this.taken = true; this.hand.take(this.thing, w);
+      this.taken = true; this.hand.take(this.thing, w, this);
       Sound.happy(); sparkleBurst(this.x, this.y, 10);
     }
     this.wasNear = near;
   }
   draw(): void {
-    if (this.taken || !visible(this.x - 60, this.x + 60)) return;
+    if (this.taken) return;
+    if (this.back < 1) {
+      // fly home in a little arc
+      const k = this.back * this.back * (3 - 2 * this.back);
+      const x = this.bx + (this.x - this.bx) * k, y = this.by + (this.y - this.by) * k - Math.sin(this.back * Math.PI) * 80;
+      ctx.save(); ctx.translate(x, y); this.thing.draw(); ctx.restore();
+      return;
+    }
+    if (!visible(this.x - 60, this.x + 60)) return;
     if (!this.hand.holding) touchGlow(this.x, this.y, 46);
     ctx.save(); ctx.translate(this.x, this.y + Math.sin(V.time * 2 + this.x) * 2); this.thing.draw(); ctx.restore();
   }

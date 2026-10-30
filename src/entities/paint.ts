@@ -31,6 +31,8 @@ export class Brush implements Entity {
     if (!this.color) this.trail.reset(w.player.x, w.player.y - 70);
     this.color = col;
   }
+  carrying(): boolean { return !!this.color; }
+  drop(): void { this.color = null; Sound.tick(); }
   draw(): void {
     if (!this.color) return;
     ctx.save(); ctx.translate(this.trail.x, this.trail.y + Math.sin(V.time * 4) * 4);

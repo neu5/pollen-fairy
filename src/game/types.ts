@@ -53,6 +53,8 @@ export interface Entity {
   draw(w: World): void;
   drawLight?(w: World): void; // drawn after the night tint, additive
   drawOver?(w: World): void;  // bubbles and arrows, drawn on top of everything in the world
+  carrying?(): boolean;       // the fairy holds something from this entity
+  drop?(w: World): void;      // put it down: it goes back where it came from
 }
 
 export interface LevelDef {

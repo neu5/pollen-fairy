@@ -194,6 +194,11 @@ kbd {
 #tr { left: 130px; }
 #tf { right: 26px; width: 116px; height: 116px; }
 #tf svg { width: 64px; height: 64px; }
+/* put down what the fairy carries: only there while she holds something */
+#drop { display: none; right: 160px; width: 80px; height: 80px; cursor: pointer; }
+body[data-screen="level"] #drop.show { display: grid; animation: pop 0.25s ease-out; }
+#drop svg { width: 40px; height: 40px; }
+@keyframes pop { from { transform: scale(0.6); opacity: 0; } }
 
 @keyframes float { 50% { transform: translateY(-10px) rotate(-1deg); } }
 @keyframes pulse { 50% { scale: 1.06; } }
